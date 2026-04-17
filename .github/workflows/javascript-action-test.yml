@@ -35,7 +35,8 @@ jobs:
         run: |
           set -euo pipefail
           expected_in="hello-${{ runner.os }}"
-          # Reverse expected_in in shell to compare.
-          rev=$(printf '%s' "$expected_in" | rev)
+          # `rev` isn't available on Windows runners; reverse in pure bash.
+          rev=""
+          for (( i=${#expected_in}-1; i>=0; i-- )); do rev+="${expected_in:i:1}"; done
           [ "$REV" = "$rev" ] || { echo "FAIL: reversed=$REV expected=$rev"; exit 1; }
           echo "PASS: js action reversed correctly on ${{ runner.os }} -> $REV" >> "$GITHUB_STEP_SUMMARY"

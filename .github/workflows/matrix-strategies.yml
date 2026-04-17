@@ -97,19 +97,36 @@ jobs:
   failing_leg:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
         leg: [ok-1, fail-on-purpose, ok-2]
     steps:
-      - run: |
+      - name: Run leg
+        # Step-level continue-on-error on the failing leg keeps the JOB
+        # conclusion as success, so the parent reusable workflow's
+        # bubble-up conclusion stays clean. We still document the failure
+        # by recording the outcome below.
+        continue-on-error: ${{ matrix.leg == 'fail-on-purpose' }}
+        id: leg
+        run: |
           set -euo pipefail
           if [ "${{ matrix.leg }}" = "fail-on-purpose" ]; then
             echo "deliberate failure to test continue-on-error + fail-fast=false"
             exit 1
           fi
           echo "PASS: leg ${{ matrix.leg }} succeeded" >> "$GITHUB_STEP_SUMMARY"
+      - name: Record outcome
+        run: |
+          set -euo pipefail
+          echo "leg=${{ matrix.leg }} outcome=${{ steps.leg.outcome }} conclusion=${{ steps.leg.conclusion }}"
+          if [ "${{ matrix.leg }}" = "fail-on-purpose" ]; then
+            [ "${{ steps.leg.outcome }}" = "failure" ] || { echo "FAIL: expected outcome=failure"; exit 1; }
+            [ "${{ steps.leg.conclusion }}" = "success" ] || { echo "FAIL: expected conclusion=success (continue-on-error)"; exit 1; }
+            echo "PASS: failing leg masked by continue-on-error as expected" >> "$GITHUB_STEP_SUMMARY"
+          else
+            [ "${{ steps.leg.outcome }}" = "success" ] || { echo "FAIL: expected outcome=success"; exit 1; }
+          fi
 
   failing_leg_assert:
     needs: failing_leg
