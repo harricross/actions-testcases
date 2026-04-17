@@ -112,6 +112,7 @@ jobs:
             _scheduler.yml _aggregate.yml _self-test.yml
             reusable-caller.yml triggers-workflow-call.yml
             triggers-push.yml triggers-workflow-run.yml triggers-manual.yml
+            triggers-events.yml
           )
           missing_from_scheduler=()
           for f in .github/workflows/*.yml; do
