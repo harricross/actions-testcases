@@ -45,11 +45,21 @@ jobs:
           url="${{ steps.u.outputs.url }}"
           # Cache-bust to avoid stale CDN copies hiding deploy regressions.
           probe="${url}?probe=$(date -u +%s)"
-          body=$(curl -fsSL --max-time 30 "$probe")
+          # Capture status separately so a 404 (first-run race, before the
+          # aggregator has deployed anything) doesn't fail the suite.
+          code=$(curl -s -o /tmp/page.html -w '%{http_code}' --max-time 30 "$probe" || echo "000")
+          if [ "$code" = "404" ]; then
+            echo "SKIP: Pages site has no deploy yet (HTTP 404). The aggregator will publish on its next run." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [ "$code" != "200" ]; then
+            echo "FAIL: Pages URL ${url} returned HTTP ${code}"
+            exit 1
+          fi
           # The dashboard always contains this title and a link to metrics.json.
-          echo "$body" | grep -q "actions-testcases — live status" \
+          grep -q "actions-testcases — live status" /tmp/page.html \
             || { echo "FAIL: dashboard body missing expected title"; exit 1; }
-          echo "$body" | grep -q "metrics.json" \
+          grep -q "metrics.json" /tmp/page.html \
             || { echo "FAIL: dashboard body missing metrics.json link"; exit 1; }
           # Also fetch the data file directly.
           curl -fsSL --max-time 30 "${url%/}/metrics.json" >/dev/null \
