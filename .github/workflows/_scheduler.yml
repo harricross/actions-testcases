@@ -13,9 +13,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  actions: write
-  issues: write
+  # Union of permissions required by every called reusable workflow.
+  # A caller cannot grant a callee more than it holds itself.
+  contents: write           # dependency-graph, triggers-push
+  actions: write            # concurrency (cancellation), scheduler dispatches
+  issues: write             # triggers-events, scheduler bookkeeping
+  pull-requests: write      # triggers-push
+  deployments: write        # environments-approval
+  pages: write              # pages-deploy
+  id-token: write           # oidc-cloud, artifacts-attestations, pages-deploy
+  attestations: write       # artifacts-attestations
 
 defaults:
   run:
