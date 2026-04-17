@@ -1,7 +1,10 @@
 name: pages-deploy
 
-# Exercises GitHub Pages deploy via the official actions. Gated on
-# vars.ENABLE_PAGES — Pages must also be enabled in repo Settings.
+# The deploy side of GitHub Pages is now exercised every hour by
+# `_aggregate.yml`, which publishes the live dashboard. This workflow
+# probes the *consumer* side: it asserts the published Pages URL is
+# reachable and serves the dashboard. Skips on first run before a
+# dashboard exists.
 
 on:
   workflow_call:
@@ -9,69 +12,46 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+  pages: read
 
 defaults:
   run:
     shell: bash
 
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
-  gate:
+  probe:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
-    outputs:
-      enabled: ${{ steps.g.outputs.enabled }}
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
     steps:
-      - id: g
+      - name: Resolve Pages URL
+        id: u
         run: |
           set -euo pipefail
-          if [ "${{ vars.ENABLE_PAGES }}" != "true" ]; then
-            echo "SKIP: vars.ENABLE_PAGES is not 'true'" >> "$GITHUB_STEP_SUMMARY"
-            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          url=$(gh api "repos/${GITHUB_REPOSITORY}/pages" --jq '.html_url' 2>/dev/null || true)
+          if [ -z "$url" ] || [ "$url" = "null" ]; then
+            echo "SKIP: Pages not configured for this repository" >> "$GITHUB_STEP_SUMMARY"
+            echo "url=" >> "$GITHUB_OUTPUT"
           else
-            echo "enabled=true" >> "$GITHUB_OUTPUT"
+            echo "url=$url" >> "$GITHUB_OUTPUT"
           fi
 
-  build:
-    needs: gate
-    if: needs.gate.outputs.enabled == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build site
+      - name: Fetch and assert dashboard
+        if: steps.u.outputs.url != ''
         run: |
           set -euo pipefail
-          mkdir -p _site
-          ts=$(date -u +%FT%TZ)
-          cat > _site/index.html <<HTML
-          <!doctype html>
-          <html><body>
-            <h1>actions-testcases</h1>
-            <p>Pages deploy probe at ${ts}</p>
-            <p>commit: ${GITHUB_SHA}</p>
-          </body></html>
-          HTML
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    environment:
-      name: github-pages
-      url: ${{ steps.dep.outputs.page_url }}
-    steps:
-      - id: dep
-        uses: actions/deploy-pages@v4
-      - run: |
-          set -euo pipefail
-          echo "PASS: Pages deployed to ${{ steps.dep.outputs.page_url }}" >> "$GITHUB_STEP_SUMMARY"
+          url="${{ steps.u.outputs.url }}"
+          # Cache-bust to avoid stale CDN copies hiding deploy regressions.
+          probe="${url}?probe=$(date -u +%s)"
+          body=$(curl -fsSL --max-time 30 "$probe")
+          # The dashboard always contains this title and a link to metrics.json.
+          echo "$body" | grep -q "actions-testcases — live status" \
+            || { echo "FAIL: dashboard body missing expected title"; exit 1; }
+          echo "$body" | grep -q "metrics.json" \
+            || { echo "FAIL: dashboard body missing metrics.json link"; exit 1; }
+          # Also fetch the data file directly.
+          curl -fsSL --max-time 30 "${url%/}/metrics.json" >/dev/null \
+            || { echo "FAIL: metrics.json not served"; exit 1; }
+          echo "PASS: Pages serves the live dashboard at ${url}" >> "$GITHUB_STEP_SUMMARY"

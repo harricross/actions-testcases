@@ -1,6 +1,13 @@
 # actions-testcases
 
 [![Actions suite](https://github.com/harricross/actions-testcases/actions/workflows/_scheduler.yml/badge.svg)](https://github.com/harricross/actions-testcases/actions/workflows/_scheduler.yml)
+[![Aggregator](https://github.com/harricross/actions-testcases/actions/workflows/_aggregate.yml/badge.svg)](https://github.com/harricross/actions-testcases/actions/workflows/_aggregate.yml)
+
+> 🔗 **[Live dashboard](https://harricross.github.io/actions-testcases/)** ·
+> 📊 **[Latest highlights](https://github.com/harricross/actions-testcases/blob/status/status/README.md)** ·
+> 🗂️ **[Status branch](https://github.com/harricross/actions-testcases/tree/status)** ·
+> 📁 **[Hourly snapshots](https://github.com/harricross/actions-testcases/tree/status/status)** ·
+> 🐛 **[Failing suites](https://github.com/harricross/actions-testcases/issues?q=is%3Aissue+is%3Aopen+label%3Asuite-failure)**
 
 Hourly, **fork-and-go** smoke suite that exercises every shippable GitHub
 Actions feature. Designed to run unmodified inside a GitHub Enterprise (GHES
@@ -60,8 +67,12 @@ Actions → Variables). All variables are documented in
 | `ARC_RUNNER_LABEL` | Actions Runner Controller suite |
 | `LARGER_RUNNER_LABEL` | Larger hosted runner suite |
 | `APPROVAL_ENVIRONMENT` | Environments + approvals suite |
-| `ENABLE_PAGES` | GitHub Pages deployment suite |
 | `ENABLE_ATTESTATIONS` | Build provenance attestations suite |
+
+> GitHub Pages is now used for the **live dashboard** (deployed every
+> hour by `_aggregate.yml`). Enable it once at
+> *Settings → Pages → Source: GitHub Actions*. The `pages-deploy.yml`
+> suite then probes the published dashboard URL on every run.
 
 ## Repository layout
 
@@ -79,20 +90,31 @@ AGENTS.md           # contributor + LLM-session notes (READ THIS FIRST)
 ## Reading the results
 
 The aggregator workflow (`_aggregate.yml`) runs after every `_scheduler.yml`
-completion and produces three things:
+completion and produces four things:
 
+- **A live HTML dashboard** at
+  [`harricross.github.io/actions-testcases`](https://harricross.github.io/actions-testcases/),
+  re-rendered every hour. Per-suite uptime (24h / 7d / 30d), current
+  streak, flake count, and MTTR — sortable, with deep links to the
+  failing run. Single self-contained page, no external JS.
+- **Highlights** computed deterministically from the snapshot history:
+  new failures, recoveries, long red streaks, flakiest suites, lowest
+  uptime. Surfaced at the top of [`status/README.md`](https://github.com/harricross/actions-testcases/blob/status/status/README.md),
+  in every aggregator run summary, and as an "Highlights" section in the
+  hourly snapshot.
 - **A committed snapshot** on a dedicated [`status` branch](../../tree/status).
   Each hour writes `status/YYYY/MM/DD/HH.json` (machine-readable) +
   `HH.md` (rendered). Daily and monthly rollup markdown files live one
-  level up. The `main` branch is never touched.
+  level up. `status/metrics.json` always holds the latest derived
+  metrics. The `main` branch is never touched.
 - **Per-failing-suite issues** labelled `suite-failure`. One issue per
   failing workflow, deduplicated by title. Each subsequent failure adds
   a comment; when the suite recovers, the issue auto-closes with a
   recovery comment.
-- **Per-suite step summaries** in the Actions UI (every workflow writes
-  PASS/FAIL lines to `$GITHUB_STEP_SUMMARY`).
 
-The badge above reflects the latest `_scheduler.yml` run conclusion.
+The badges above reflect the latest scheduler and aggregator run
+conclusions. The dashboard is also the source of truth for "is the
+suite happy right now?"
 
 ## Contributing
 

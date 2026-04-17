@@ -28,6 +28,8 @@ permissions:
   contents: write
   actions: read
   issues: write
+  pages: write
+  id-token: write
 
 defaults:
   run:
@@ -205,7 +207,7 @@ jobs:
             git commit -q -m "init status branch"
           fi
 
-      - name: Write snapshot + rollups + commit
+      - name: Write snapshot + rollups
         env:
           Y: ${{ steps.snap.outputs.year }}
           M: ${{ steps.snap.outputs.month }}
@@ -256,11 +258,387 @@ jobs:
             done
           } > "$monthly"
 
-          # ----- Top-level index -----
+      # ------------------------------------------------------------------
+      # 2b. Compute deterministic metrics + highlights from history.
+      # ------------------------------------------------------------------
+      - name: Compute metrics
+        id: metrics
+        env:
+          TS: ${{ steps.snap.outputs.ts }}
+        run: |
+          set -euo pipefail
+          cd status-branch
+
+          # Slurp every snapshot we've ever written (small files, ~720/month).
+          # Build a per-suite history sorted by timestamp, then derive uptime,
+          # streaks, flake counts, MTTR, and per-window stats.
+          shopt -s globstar nullglob
+          files=( status/**/*.json )
+          # Filter to hourly snapshots only (HH.json), excluding the rollup
+          # files we may add later. The path always ends /YYYY/MM/DD/HH.json.
+          hourly=()
+          for f in "${files[@]}"; do
+            base="$(basename "$f" .json)"
+            case "$base" in [0-9][0-9]) hourly+=("$f");; esac
+          done
+
+          if [ "${#hourly[@]}" -eq 0 ]; then
+            echo '{"generated_at":"'"$TS"'","suites":[],"highlights":{"new_failures":[],"recoveries":[],"long_red":[],"flakiest":[],"low_uptime":[]}}' > ../metrics.json
+          else
+            jq -s --arg now "$TS" '
+              # Reduce all snapshots into per-suite history.
+              # parse_ts converts ISO 8601 to epoch seconds.
+              def parse_ts(s): s | sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601;
+              def now_epoch: $now | parse_ts(.);
+
+              ([ .[] as $snap | $snap.suites[] | select(.workflow != "_scheduler.yml")
+                 | { workflow, label, conclusion, url, ts: $snap.generated_at } ]
+              | group_by(.workflow)
+              | map(
+                  sort_by(.ts) as $h
+                  | ($h[-1].label) as $label
+                  | ($h[-1]) as $latest
+                  | ($h[-2] // null) as $prev
+                  | ($h | map(select(.conclusion == "success" or .conclusion == "failure"))) as $hd
+                  | ($hd | map(select(.conclusion == "success")) | length) as $succ
+                  | ($hd | map(select(.conclusion == "failure")) | length) as $fail
+                  | ($hd | length) as $tot
+                  # Window: last 24h / 7d / 30d as epoch deltas.
+                  | (now_epoch - 86400)  as $t24
+                  | (now_epoch - 604800) as $t7d
+                  | (now_epoch - 2592000) as $t30d
+                  | ($hd | map(select((.ts | parse_ts(.)) >= $t24)))  as $w24
+                  | ($hd | map(select((.ts | parse_ts(.)) >= $t7d)))  as $w7d
+                  | ($hd | map(select((.ts | parse_ts(.)) >= $t30d))) as $w30d
+                  | def uptime(arr): (arr | length) as $n
+                                     | if $n == 0 then null
+                                       else ((arr | map(select(.conclusion=="success")) | length) * 1000 / $n | floor / 10)
+                                       end;
+                  # Flake count = transitions in window (success<->failure boundaries).
+                  | def flakes(arr):
+                      if (arr | length) < 2 then 0
+                      else [range(1; arr|length) | select(arr[.].conclusion != arr[.-1].conclusion)] | length
+                      end;
+                  # Current streak: trailing run of identical conclusions.
+                  | (reduce ($hd | reverse[]) as $e ({c: $latest.conclusion, n: 0, done: false};
+                      if .done then . elif $e.conclusion == .c then .n += 1 else .done = true end))
+                    as $streak
+                  # MTTR over 7d: avg gap between a failure and the next success.
+                  | (reduce range(0; ($w7d|length)) as $i (
+                      {acc: 0, count: 0, last_fail: null};
+                      ($w7d[$i]) as $e
+                      | if $e.conclusion == "failure" and (.last_fail == null) then .last_fail = ($e.ts | parse_ts(.))
+                        elif $e.conclusion == "success" and (.last_fail != null) then
+                          .acc += (($e.ts | parse_ts(.)) - .last_fail) | .count += 1 | .last_fail = null
+                        else . end))
+                    as $mttr
+                  | {
+                      workflow,
+                      label: $label,
+                      latest: $latest,
+                      prev: $prev,
+                      flipped: ($prev != null and $prev.conclusion != $latest.conclusion),
+                      total_seen: $tot,
+                      success: $succ,
+                      failure: $fail,
+                      uptime_24h: uptime($w24),
+                      uptime_7d:  uptime($w7d),
+                      uptime_30d: uptime($w30d),
+                      streak_count: $streak.n,
+                      streak_state: $latest.conclusion,
+                      flakes_7d: flakes($w7d),
+                      mttr_7d_seconds: (if $mttr.count > 0 then ($mttr.acc / $mttr.count | floor) else null end)
+                    }
+                )) as $suites
+
+              | {
+                  generated_at: $now,
+                  suites: $suites,
+                  highlights: {
+                    new_failures: ([$suites[] | select(.flipped and .latest.conclusion=="failure")
+                                   | {workflow,label,url:.latest.url}]),
+                    recoveries:   ([$suites[] | select(.flipped and .latest.conclusion=="success")
+                                   | {workflow,label,url:.latest.url}]),
+                    long_red:     ([$suites[] | select(.streak_state=="failure" and .streak_count>=3)
+                                   | {workflow,label,hours:.streak_count,url:.latest.url}]
+                                   | sort_by(-.hours)),
+                    flakiest:     ([$suites[] | select(.flakes_7d>0)
+                                   | {workflow,label,flakes:.flakes_7d}]
+                                   | sort_by(-.flakes) | .[0:5]),
+                    low_uptime:   ([$suites[] | select(.uptime_24h != null and .uptime_24h < 95)
+                                   | {workflow,label,uptime_24h}]
+                                   | sort_by(.uptime_24h) | .[0:5])
+                  }
+                }
+            ' "${hourly[@]}" > ../metrics.json
+          fi
+
+          cp ../metrics.json status/metrics.json
+
+          # Render highlights as markdown for issue/summary inclusion.
+          jq -r '
+            def fmt_pct(p): if p == null then "n/a" else "\(p)%" end;
+            def fmt_dur(s): if s == null then "n/a"
+              else (s/60|floor) as $m
+                | if $m < 60 then "\($m)m"
+                  elif $m < 1440 then "\($m/60|floor)h"
+                  else "\($m/1440|floor)d" end end;
+            "# Highlights — \(.generated_at)",
+            "",
+            (if (.highlights.new_failures|length) > 0 then
+              "## 🆕 New failures this hour",
+              "",
+              (.highlights.new_failures[] | "- ❌ **\(.label)** — [run](\(.url))"),
+              ""
+             else empty end),
+            (if (.highlights.recoveries|length) > 0 then
+              "## ✅ Recoveries this hour",
+              "",
+              (.highlights.recoveries[] | "- 🟢 **\(.label)** — [run](\(.url))"),
+              ""
+             else empty end),
+            (if (.highlights.long_red|length) > 0 then
+              "## 🔥 Currently failing for ≥ 3 hours",
+              "",
+              (.highlights.long_red[] | "- **\(.label)** — \(.hours)h — [run](\(.url))"),
+              ""
+             else empty end),
+            (if (.highlights.flakiest|length) > 0 then
+              "## 🦋 Flakiest (last 7d)",
+              "",
+              (.highlights.flakiest[] | "- **\(.label)** — \(.flakes) transitions"),
+              ""
+             else empty end),
+            (if (.highlights.low_uptime|length) > 0 then
+              "## 📉 Lowest uptime (last 24h)",
+              "",
+              (.highlights.low_uptime[] | "- **\(.label)** — \(fmt_pct(.uptime_24h))"),
+              ""
+             else empty end),
+            "## Per-suite snapshot",
+            "",
+            "| Suite | Latest | Streak | Uptime 24h | Uptime 7d | Flakes 7d | MTTR 7d |",
+            "|---|---|---|---|---|---|---|",
+            (.suites[] |
+              ((.latest.conclusion // "—") as $c |
+               (if $c == "success" then "✅"
+                elif $c == "failure" then "❌"
+                elif $c == "cancelled" then "🟡"
+                else "⚪" end) as $icon |
+               "| \(.label) | \($icon) \($c) | \(.streak_count) \(.streak_state) | \(fmt_pct(.uptime_24h)) | \(fmt_pct(.uptime_7d)) | \(.flakes_7d) | \(fmt_dur(.mttr_7d_seconds)) |"
+              ))
+          ' ../metrics.json > status/highlights.md
+
+          cp status/highlights.md "$GITHUB_STEP_SUMMARY"
+          cp ../metrics.json ../dashboard-data.json
+
+          # Counters for outputs.
+          {
+            echo "new_failures=$(jq '.highlights.new_failures|length' ../metrics.json)"
+            echo "recoveries=$(jq '.highlights.recoveries|length' ../metrics.json)"
+            echo "long_red=$(jq '.highlights.long_red|length' ../metrics.json)"
+          } >> "$GITHUB_OUTPUT"
+
+      # ------------------------------------------------------------------
+      # 2c. Render a self-contained dashboard.html (no runtime deps).
+      # ------------------------------------------------------------------
+      - name: Render dashboard
+        env:
+          REPO: ${{ github.repository }}
+          SERVER: ${{ github.server_url }}
+        run: |
+          set -euo pipefail
+          mkdir -p site
+          # Inline metrics.json into the page so the dashboard works offline,
+          # has no CORS surprises, and is byte-stable per snapshot.
+          DATA="$(cat metrics.json)"
+          cat > site/index.html <<HTML
+          <!doctype html>
+          <html lang="en">
+          <head>
+          <meta charset="utf-8">
+          <title>actions-testcases — live status</title>
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <style>
+            :root { color-scheme: light dark;
+              --ok:#1a7f37; --bad:#cf222e; --warn:#bf8700; --mute:#57606a;
+              --bg:#fff; --fg:#1f2328; --card:#f6f8fa; --border:#d0d7de; }
+            @media (prefers-color-scheme: dark) {
+              :root { --bg:#0d1117; --fg:#e6edf3; --card:#161b22; --border:#30363d;
+                      --ok:#3fb950; --bad:#f85149; --warn:#d29922; --mute:#8b949e; }
+            }
+            * { box-sizing: border-box; }
+            body { font: 14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+              margin: 0; padding: 24px; background: var(--bg); color: var(--fg); }
+            h1 { margin: 0 0 4px; font-size: 24px; }
+            .meta { color: var(--mute); margin-bottom: 24px; }
+            .hl { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+              gap: 12px; margin-bottom: 24px; }
+            .card { background: var(--card); border: 1px solid var(--border);
+              border-radius: 8px; padding: 12px 14px; }
+            .card h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase;
+              letter-spacing: 0.04em; color: var(--mute); }
+            .card ul { margin: 0; padding-left: 18px; }
+            .card li { margin: 2px 0; }
+            .card.empty { color: var(--mute); }
+            table { width: 100%; border-collapse: collapse; background: var(--card);
+              border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+            th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+            th { font-weight: 600; background: var(--bg); cursor: pointer; user-select: none; }
+            th.sorted::after { content: " ↑"; color: var(--mute); }
+            th.sorted.desc::after { content: " ↓"; }
+            tr:last-child td { border-bottom: 0; }
+            .ok { color: var(--ok); font-weight: 600; }
+            .bad { color: var(--bad); font-weight: 600; }
+            .warn { color: var(--warn); }
+            .mute { color: var(--mute); }
+            a { color: inherit; }
+            .footer { margin-top: 24px; color: var(--mute); font-size: 12px; }
+            .pill { display: inline-block; padding: 2px 8px; border-radius: 999px;
+              background: var(--card); border: 1px solid var(--border); font-size: 12px; }
+          </style>
+          </head>
+          <body>
+          <h1>actions-testcases — live status</h1>
+          <div class="meta">
+            Snapshot <span id="ts"></span> ·
+            <a href="${SERVER}/${REPO}">${REPO}</a> ·
+            <a href="${SERVER}/${REPO}/tree/status">status branch</a> ·
+            <a href="${SERVER}/${REPO}/actions">actions</a>
+          </div>
+          <div class="hl" id="highlights"></div>
+          <table id="suites">
+            <thead><tr>
+              <th data-sort="label">Suite</th>
+              <th data-sort="latest">Latest</th>
+              <th data-sort="streak">Streak</th>
+              <th data-sort="uptime_24h">Uptime 24h</th>
+              <th data-sort="uptime_7d">Uptime 7d</th>
+              <th data-sort="flakes_7d">Flakes 7d</th>
+              <th data-sort="mttr_7d_seconds">MTTR 7d</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="footer">
+            Auto-rendered every hour by
+            <a href="${SERVER}/${REPO}/blob/main/.github/workflows/_aggregate.yml">_aggregate.yml</a>.
+            Data: <a href="metrics.json">metrics.json</a>.
+            No external dependencies; no JavaScript leaves your browser.
+          </div>
+          <script>
+          const DATA = ${DATA};
+          const fmtPct = p => p == null ? '<span class="mute">n/a</span>' :
+            \`<span class="\${p >= 99 ? 'ok' : p >= 95 ? '' : p >= 80 ? 'warn' : 'bad'}">\${p}%</span>\`;
+          const fmtDur = s => {
+            if (s == null) return '<span class="mute">n/a</span>';
+            const m = Math.floor(s/60);
+            return m < 60 ? \`\${m}m\` : m < 1440 ? \`\${Math.floor(m/60)}h\` : \`\${Math.floor(m/1440)}d\`;
+          };
+          const icon = c => c === 'success' ? '<span class="ok">✓ success</span>' :
+            c === 'failure' ? '<span class="bad">✗ failure</span>' :
+            c === 'cancelled' ? '<span class="warn">○ cancelled</span>' :
+            '<span class="mute">– none</span>';
+          document.getElementById('ts').textContent = DATA.generated_at;
+
+          const hl = document.getElementById('highlights');
+          const card = (title, items, render, emptyMsg) => {
+            const div = document.createElement('div');
+            div.className = 'card' + (items.length === 0 ? ' empty' : '');
+            div.innerHTML = \`<h3>\${title}</h3>\` +
+              (items.length === 0 ? \`<div>\${emptyMsg}</div>\` :
+                '<ul>' + items.map(render).join('') + '</ul>');
+            hl.appendChild(div);
+          };
+          const H = DATA.highlights;
+          card('🆕 New failures', H.new_failures,
+            x => \`<li>❌ <a href="\${x.url}">\${x.label}</a></li>\`, 'None this hour');
+          card('✅ Recoveries', H.recoveries,
+            x => \`<li>🟢 <a href="\${x.url}">\${x.label}</a></li>\`, 'None this hour');
+          card('🔥 Long red streaks (≥3h)', H.long_red,
+            x => \`<li><a href="\${x.url}">\${x.label}</a> — \${x.hours}h</li>\`, 'All clear');
+          card('🦋 Flakiest (7d)', H.flakiest,
+            x => \`<li>\${x.label} — \${x.flakes} transitions</li>\`, 'No flakes detected');
+          card('📉 Low uptime (24h, <95%)', H.low_uptime,
+            x => \`<li>\${x.label} — \${x.uptime_24h}%</li>\`, 'All ≥ 95%');
+
+          const tbody = document.querySelector('#suites tbody');
+          const renderRows = (suites) => {
+            tbody.innerHTML = suites.map(s => \`
+              <tr>
+                <td><a href="\${s.latest.url || '#'}">\${s.label}</a></td>
+                <td>\${icon(s.latest.conclusion)}</td>
+                <td>\${s.streak_count} <span class="mute">\${s.streak_state}</span></td>
+                <td>\${fmtPct(s.uptime_24h)}</td>
+                <td>\${fmtPct(s.uptime_7d)}</td>
+                <td>\${s.flakes_7d}</td>
+                <td>\${fmtDur(s.mttr_7d_seconds)}</td>
+              </tr>\`).join('');
+          };
+          let sortKey = 'label', sortDesc = false;
+          const cmp = (a,b) => {
+            const av = sortKey === 'label' ? a.label
+              : sortKey === 'latest' ? (a.latest.conclusion || '')
+              : sortKey === 'streak' ? a.streak_count
+              : a[sortKey];
+            const bv = sortKey === 'label' ? b.label
+              : sortKey === 'latest' ? (b.latest.conclusion || '')
+              : sortKey === 'streak' ? b.streak_count
+              : b[sortKey];
+            if (av == null && bv == null) return 0;
+            if (av == null) return 1;
+            if (bv == null) return -1;
+            return (av < bv ? -1 : av > bv ? 1 : 0) * (sortDesc ? -1 : 1);
+          };
+          const apply = () => {
+            document.querySelectorAll('th').forEach(th => {
+              th.classList.toggle('sorted', th.dataset.sort === sortKey);
+              th.classList.toggle('desc', th.dataset.sort === sortKey && sortDesc);
+            });
+            renderRows([...DATA.suites].sort(cmp));
+          };
+          document.querySelectorAll('th').forEach(th => {
+            th.addEventListener('click', () => {
+              if (sortKey === th.dataset.sort) sortDesc = !sortDesc;
+              else { sortKey = th.dataset.sort; sortDesc = false; }
+              apply();
+            });
+          });
+          apply();
+          </script>
+          </body>
+          </html>
+          HTML
+          # Also publish raw data alongside.
+          cp metrics.json site/metrics.json
+          cp snapshot.json site/snapshot.json
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Update top-level status README + commit
+        env:
+          TS: ${{ steps.snap.outputs.ts }}
+          Y: ${{ steps.snap.outputs.year }}
+          M: ${{ steps.snap.outputs.month }}
+          D: ${{ steps.snap.outputs.day }}
+          H: ${{ steps.snap.outputs.hour }}
+        run: |
+          set -euo pipefail
+          cd status-branch
+          dest="status/${Y}/${M}/${D}"
+
           {
             echo "# actions-testcases — status history"
             echo ""
-            echo "Latest snapshot: [\`${dest}/${H}.md\`](./${dest}/${H}.md) (${TS})"
+            echo "**Latest snapshot:** [\`${dest}/${H}.md\`](./${dest}/${H}.md) — ${TS}"
+            echo ""
+            echo "→ **[Live dashboard](https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY##*/}/)** (rendered fresh every hour)"
+            echo ""
+            echo "→ [Latest highlights](./highlights.md) · [machine-readable metrics](./metrics.json)"
+            echo ""
+            cat highlights.md
             echo ""
             echo "## Recent months"
             echo ""
@@ -319,3 +697,22 @@ jobs:
                 gh issue close "$num" --reason completed || true
               fi
             done
+
+  # ------------------------------------------------------------------
+  # 4. Deploy the rendered dashboard to GitHub Pages.
+  #    Pages must be enabled at repo Settings → Pages → Source: Actions.
+  # ------------------------------------------------------------------
+  deploy_dashboard:
+    needs: report
+    if: ${{ always() && needs.report.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.dep.outputs.page_url }}
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    steps:
+      - id: dep
+        uses: actions/deploy-pages@v4
