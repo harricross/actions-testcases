@@ -213,25 +213,43 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
           # ---------------------------------------------------------------
-          # (g) On full success only: hard-delete the issue via the GraphQL
-          #     `deleteIssue` mutation. REST has no delete endpoint — this
-          #     mutation is the only path. On failure we leave NUM set and
-          #     skip deletion so the trap's debug comment lands and the
-          #     issue stays open for inspection.
+          # (g) On full success: try to hard-delete the issue via the
+          #     GraphQL `deleteIssue` mutation. REST has no delete endpoint
+          #     — this mutation is the only path. Hard delete requires
+          #     **admin** permission, which the default `GITHUB_TOKEN` does
+          #     NOT grant ("Viewer not authorized to delete"). If the
+          #     mutation is rejected, fall back to closing the issue as
+          #     `not planned` and record `issue_deleted=false` in the
+          #     ledger so the audit trail reflects what actually happened.
+          #     The lifecycle phases themselves are unaffected — cleanup
+          #     residue is recorded, not asserted.
           # ---------------------------------------------------------------
           ISSUE_DELETED="false"
           if [ "$fail" -eq 0 ]; then
             # shellcheck disable=SC2016 # $id is a GraphQL variable, not shell.
-            gh api graphql \
-              -f query='mutation($id:ID!){deleteIssue(input:{issueId:$id}){clientMutationId}}' \
-              -F id="$NODE_ID" \
-              >/dev/null
-            ISSUE_DELETED="true"
-            echo "PASS: hard-deleted issue #$NUM via GraphQL deleteIssue"
-            echo "🧹 hard-deleted #$NUM" >> "$GITHUB_STEP_SUMMARY"
-            # Clear NUM so the failure-trap doesn't try to comment on a
-            # deleted issue if a later step in this script ever errors.
-            NUM=""
+            if gh api graphql \
+                -f query='mutation($id:ID!){deleteIssue(input:{issueId:$id}){clientMutationId}}' \
+                -F id="$NODE_ID" \
+                >/dev/null 2>delete.err; then
+              ISSUE_DELETED="true"
+              echo "PASS: hard-deleted issue #$NUM via GraphQL deleteIssue"
+              echo "🧹 hard-deleted #$NUM" >> "$GITHUB_STEP_SUMMARY"
+              # Disarm the failure trap — issue no longer exists.
+              NUM=""
+            else
+              err="$(cat delete.err 2>/dev/null || true)"
+              echo "WARN: GraphQL deleteIssue rejected — ${err}"
+              echo "ℹ️  delete unavailable (${err}); falling back to close-as-not-planned" >> "$GITHUB_STEP_SUMMARY"
+              # Reopen first so we can re-close with a different reason than
+              # the earlier `completed` close, then close as not_planned.
+              # The phase already asserted state=closed,reason=completed —
+              # the post-cleanup state is intentionally distinct so a
+              # human can tell at a glance "this was the cleanup close".
+              gh issue reopen "$NUM" >/dev/null 2>&1 || true
+              gh issue close "$NUM" --reason "not planned" >/dev/null 2>&1 || true
+              # Disarm the trap; we already closed cleanly.
+              NUM=""
+            fi
           fi
 
           # ---------------------------------------------------------------

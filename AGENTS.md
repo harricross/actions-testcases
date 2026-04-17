@@ -235,20 +235,25 @@ to manage `suite-failure` issues: open → read → comment → list comments
   the hourly rollup would let a token regression here mask every other
   suite's status. It is therefore listed in the Test 3 exempt set in
   `_self-test.yml` (carried in `.github/scripts/check-contracts.sh`).
-- **Cleanup — hard-delete on success, leave-open on failure.** On a
-  fully green run the test issue is **hard-deleted** via the GraphQL
+- **Cleanup — hard-delete on success (best-effort), close-as-fallback,
+  leave-open on failure.** On a fully green run the probe attempts to
+  **hard-delete** the test issue via the GraphQL
   `deleteIssue(input:{issueId})` mutation. There is no REST endpoint
   for issue deletion (`gh issue delete` does not exist; REST only
   closes), so GraphQL is the only path — and it requires the issue's
-  `node_id`, captured at create time. The probe must therefore have
-  `issues: write` *and* a token with delete permissions (the default
-  `GITHUB_TOKEN` does, for issues it just created in the same repo).
-  On any phase failure the issue is **left OPEN** with a debug comment
-  pointing at the failing run, so a human can inspect the residue
-  rather than us truncating the audit trail. After a successful run,
-  `gh issue list --label selftest-lifecycle --state all` should show
-  zero entries from that run; a leftover closed issue means the delete
-  step failed and is itself worth investigating.
+  `node_id`, captured at create time. Hard delete also requires
+  **admin** permission on the repo, which the default `GITHUB_TOKEN`
+  does **not** grant ("Viewer not authorized to delete"). When the
+  mutation is rejected the probe falls back to closing the issue with
+  `--reason "not planned"` (distinct from the earlier `completed`
+  close so it's recognisable as cleanup) and records `issue_deleted:
+  false` in the ledger. The lifecycle phases themselves already
+  passed — cleanup residue is recorded, not asserted, so a fork with
+  only the default token still produces a green run with closed
+  residue. Forks that want true zero-residue can grant a PAT with
+  admin scope via `GH_TOKEN`. On any phase failure the issue is
+  **left OPEN** with a debug comment pointing at the failing run, so
+  a human can inspect rather than us truncating the audit trail.
 - **Run ledger on the `status` branch.** Every run (pass or fail)
   appends a structured record to `probes/issue-lifecycle.json` on the
   `status` orphan branch (rolling tail of the last 100 runs, oldest
