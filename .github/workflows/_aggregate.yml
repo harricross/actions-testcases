@@ -636,7 +636,7 @@ jobs:
             echo ""
             echo "→ [Latest highlights](./highlights.md) · [machine-readable metrics](./metrics.json)"
             echo ""
-            cat highlights.md
+            cat status/highlights.md
             echo ""
             echo "## Recent months"
             echo ""
