@@ -109,9 +109,30 @@ results per workflow; a fat workflow loses the "what broke" signal.
      conclusion, builds `snapshot.json` + `snapshot.md`.
   2. Force-pushes the snapshot + daily/monthly rollups to a dedicated
      `status` orphan branch (no `main` pollution).
-  3. Opens a `suite-failure`-labelled issue per failing suite (deduped
+  3. **Computes deterministic metrics with `jq`** by slurping every
+     historical `status/**/HH.json` snapshot: per-suite uptime
+     (24h / 7d / 30d), current streak, flake count (success↔failure
+     transitions), MTTR over 7d, plus highlight arrays (new failures,
+     recoveries, long red ≥3h, top-5 flakiest, lowest uptime). Output
+     is `status/metrics.json` + a rendered `status/highlights.md`.
+     **No LLM, no external network, no third-party action.**
+  4. **Renders a self-contained `dashboard.html`** with the metrics
+     inlined as JSON. Vanilla CSS (light + dark via
+     `prefers-color-scheme`), small inline JS for table sort. No
+     `fetch()`, no CDN — the page must work offline if saved.
+     Deployed every hour to GitHub Pages by a separate
+     `deploy_dashboard` job (split because `actions/deploy-pages@v4`
+     requires its own `environment:` block).
+  5. Opens a `suite-failure`-labelled issue per failing suite (deduped
      by title), comments on repeats, and auto-closes issues whose
      suite has recovered.
+- `pages-deploy.yml` is a **consumer probe**, not a deployer — the
+  deploy side is exercised every hour by `_aggregate.yml`. The probe
+  fetches the published Pages URL via `curl` and asserts the dashboard
+  body contains the expected title and `metrics.json` link. Skips
+  cleanly on first run before any dashboard exists. There can only be
+  one Pages deployment per repo, so the inversion is mandatory — do
+  not turn this back into a deployer.
 
 ## Conventions
 
