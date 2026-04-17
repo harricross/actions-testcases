@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-17T11:25:24Z",
+  "generated_at": "2026-04-17T11:43:07Z",
   "suites": [
     {
       "workflow": "artifacts-attestations.yml",
@@ -9,7 +9,7 @@
         "label": "build provenance attestations",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "artifacts-attestations.yml",
@@ -28,7 +28,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "artifacts.yml",
@@ -38,7 +190,7 @@
         "label": "artifacts (v4)",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "artifacts.yml",
@@ -57,7 +209,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "cache.yml",
@@ -67,7 +371,7 @@
         "label": "cache",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "cache.yml",
@@ -86,7 +390,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "composite-action-test.yml",
@@ -96,7 +552,7 @@
         "label": "composite action",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "composite-action-test.yml",
@@ -115,7 +571,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "concurrency.yml",
@@ -125,7 +733,7 @@
         "label": "concurrency",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "concurrency.yml",
@@ -144,7 +752,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "dependency-graph.yml",
@@ -154,7 +914,7 @@
         "label": "dependency submission",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "dependency-graph.yml",
@@ -173,7 +933,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "docker-action-test.yml",
@@ -183,7 +1095,7 @@
         "label": "docker action",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "docker-action-test.yml",
@@ -202,7 +1114,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "environments-approval.yml",
@@ -212,7 +1276,7 @@
         "label": "environments / approvals",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "environments-approval.yml",
@@ -231,7 +1295,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "expressions-contexts.yml",
@@ -241,7 +1457,7 @@
         "label": "expressions / contexts",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "expressions-contexts.yml",
@@ -260,7 +1476,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "javascript-action-test.yml",
@@ -270,7 +1638,7 @@
         "label": "javascript action",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "javascript-action-test.yml",
@@ -289,7 +1657,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "job-orchestration.yml",
@@ -299,7 +1819,7 @@
         "label": "job orchestration",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "job-orchestration.yml",
@@ -318,7 +1838,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "matrix-strategies.yml",
@@ -328,7 +2000,7 @@
         "label": "matrix strategies",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "matrix-strategies.yml",
@@ -347,7 +2019,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "oidc-cloud.yml",
@@ -357,7 +2181,7 @@
         "label": "OIDC token issuance",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "oidc-cloud.yml",
@@ -376,7 +2200,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "pages-deploy.yml",
@@ -386,7 +2362,7 @@
         "label": "pages deploy",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "pages-deploy.yml",
@@ -405,7 +2381,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "permissions-token.yml",
@@ -415,7 +2543,7 @@
         "label": "permissions / GITHUB_TOKEN",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "permissions-token.yml",
@@ -434,7 +2562,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "reusable-caller.yml",
@@ -444,7 +2724,7 @@
         "label": "reusable workflow caller",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "reusable-caller.yml",
@@ -463,7 +2743,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "runners-arc.yml",
@@ -473,7 +2905,7 @@
         "label": "runners — Actions Runner Controller",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "runners-arc.yml",
@@ -492,7 +2924,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "runners-container.yml",
@@ -502,7 +3086,7 @@
         "label": "runners — container + services",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "runners-container.yml",
@@ -521,7 +3105,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "runners-larger.yml",
@@ -531,7 +3267,7 @@
         "label": "runners — larger hosted",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "runners-larger.yml",
@@ -550,7 +3286,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "runners-os-matrix.yml",
@@ -560,7 +3448,7 @@
         "label": "runners — ubuntu/win/mac",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "runners-os-matrix.yml",
@@ -579,7 +3467,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "runners-self-hosted.yml",
@@ -589,7 +3629,7 @@
         "label": "runners — self-hosted",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "runners-self-hosted.yml",
@@ -608,7 +3648,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "secrets-and-vars.yml",
@@ -618,7 +3810,7 @@
         "label": "secrets / vars / masking",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "secrets-and-vars.yml",
@@ -637,7 +3829,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "step-summary-annotations.yml",
@@ -647,7 +3991,7 @@
         "label": "step summary / annotations",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "step-summary-annotations.yml",
@@ -666,7 +4010,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "triggers-events.yml",
@@ -676,7 +4172,7 @@
         "label": "triggers — issues / events",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "triggers-events.yml",
@@ -695,7 +4191,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "triggers-manual.yml",
@@ -705,7 +4353,7 @@
         "label": "triggers — workflow_dispatch",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "triggers-manual.yml",
@@ -724,7 +4372,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "triggers-push.yml",
@@ -734,7 +4534,7 @@
         "label": "triggers — push / PR",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "triggers-push.yml",
@@ -753,7 +4553,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "triggers-workflow-call.yml",
@@ -763,7 +4715,7 @@
         "label": "triggers — workflow_call",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "triggers-workflow-call.yml",
@@ -782,7 +4734,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "triggers-workflow-run.yml",
@@ -792,7 +4896,7 @@
         "label": "triggers — workflow_run",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "triggers-workflow-run.yml",
@@ -811,7 +4915,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     },
     {
       "workflow": "workflow-commands.yml",
@@ -821,7 +5077,7 @@
         "label": "workflow commands",
         "conclusion": "missing",
         "url": "",
-        "ts": "2026-04-17T11:25:24Z"
+        "ts": "2026-04-17T11:43:07Z"
       },
       "prev": {
         "workflow": "workflow-commands.yml",
@@ -840,7 +5096,159 @@
       "streak_count": 0,
       "streak_state": "missing",
       "flakes_7d": 0,
-      "mttr_7d_seconds": null
+      "mttr_7d_seconds": null,
+      "trend_30d": [
+        {
+          "day": "2026-03-19",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-20",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-21",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-22",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-23",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-24",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-25",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-26",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-27",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-28",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-29",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-30",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-03-31",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-01",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-02",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-03",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-04",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-05",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-06",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-07",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-08",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-09",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-10",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-11",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-12",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-13",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-14",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-15",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-16",
+          "runs": 0,
+          "uptime": null
+        },
+        {
+          "day": "2026-04-17",
+          "runs": 0,
+          "uptime": null
+        }
+      ]
     }
   ],
   "highlights": {
