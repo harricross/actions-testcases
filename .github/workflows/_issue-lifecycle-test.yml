@@ -1,0 +1,163 @@
+name: _issue-lifecycle-test
+
+# Smoke test for the gh issue lifecycle the aggregator depends on.
+#
+# _aggregate.yml manages `suite-failure` issues end-to-end: create on first
+# failure, comment on repeat, close on recovery. If GITHUB_TOKEN ever loses
+# `issues: write`, or the `gh issue`/`gh api repos/:o/:r/issues` surface
+# regresses, the rollups silently stop opening/closing issues — there is no
+# louder symptom than "we just don't get paged anymore".
+#
+# This workflow exercises the whole open → comment → close → verify path
+# weekly and on demand, using a dedicated `selftest-lifecycle` label so it
+# never collides with the real `suite-failure` issue stream. A trap closes
+# the test issue even on mid-run failure.
+#
+# Intentionally NOT wired into _scheduler.yml: it's its own probe, runs on
+# its own schedule, and must stay out of the hourly rollup so a permission
+# regression here doesn't drag every other suite red.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, Monday 06:00 UTC. Hourly scheduler runs at :00; pick a day
+    # that minimises overlap with daily/monthly rollup edge cases.
+    - cron: '0 6 * * 1'
+
+permissions:
+  issues: write
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: issue-lifecycle-test
+  cancel-in-progress: false
+
+jobs:
+  lifecycle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      LABEL: selftest-lifecycle
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Exercise gh issue lifecycle
+        run: |
+          set -euo pipefail
+
+          pass=0
+          fail=0
+          NUM=""
+
+          # Cleanup trap: close the test issue if it was created, even on
+          # mid-test failure. `|| true` so cleanup never masks the real exit.
+          trap '[ -n "$NUM" ] && gh issue close "$NUM" --reason "not planned" 2>/dev/null || true' EXIT
+
+          phase() {
+            # phase <name> <pass|fail> [msg]
+            if [ "$2" = "pass" ]; then
+              pass=$((pass+1))
+              echo "PASS: $1"
+              echo "✅ $1" >> "$GITHUB_STEP_SUMMARY"
+            else
+              fail=$((fail+1))
+              echo "FAIL: $1 — ${3:-}"
+              echo "❌ $1 — ${3:-}" >> "$GITHUB_STEP_SUMMARY"
+            fi
+          }
+
+          echo "## Issue lifecycle smoke test" >> "$GITHUB_STEP_SUMMARY"
+
+          # ---------------------------------------------------------------
+          # (a) Ensure label, then create the test issue.
+          # ---------------------------------------------------------------
+          gh label create "$LABEL" --force \
+            --color ededed \
+            --description "Auto-managed probe issues from _issue-lifecycle-test" \
+            >/dev/null
+          phase "label ensured ($LABEL)" pass
+
+          STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+          TITLE="[selftest-lifecycle] $STAMP"
+          # `gh issue create` prints the issue URL on stdout (no --json
+          # support); the issue number is the trailing path component.
+          URL=$(gh issue create \
+            --title "$TITLE" \
+            --body "Automated lifecycle probe from run ${GITHUB_RUN_ID}. Safe to ignore; will be auto-closed." \
+            --label "$LABEL")
+          NUM="${URL##*/}"
+          if [ -z "$NUM" ] || ! [[ "$NUM" =~ ^[0-9]+$ ]]; then
+            phase "create issue" fail "could not parse issue number from '$URL'"
+            exit 1
+          fi
+          phase "create issue (#$NUM)" pass
+
+          # ---------------------------------------------------------------
+          # (b) Read back via gh api — assert state=open + label present.
+          # ---------------------------------------------------------------
+          ISSUE_JSON=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${NUM}")
+          state=$(jq -r '.state' <<<"$ISSUE_JSON")
+          has_label=$(jq -r --arg L "$LABEL" '[.labels[].name] | index($L) != null' <<<"$ISSUE_JSON")
+          if [ "$state" = "open" ] && [ "$has_label" = "true" ]; then
+            phase "post-create read: state=open, label present" pass
+          else
+            phase "post-create read" fail "state=$state has_label=$has_label"
+          fi
+
+          # ---------------------------------------------------------------
+          # (c) Add a comment.
+          # ---------------------------------------------------------------
+          COMMENT_BODY="lifecycle-probe-comment ${STAMP}"
+          gh issue comment "$NUM" --body "$COMMENT_BODY" >/dev/null
+          phase "post comment" pass
+
+          # ---------------------------------------------------------------
+          # (d) List comments via gh api — assert exactly 1, body matches.
+          # ---------------------------------------------------------------
+          COMMENTS_JSON=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${NUM}/comments")
+          count=$(jq 'length' <<<"$COMMENTS_JSON")
+          first_body=$(jq -r '.[0].body // ""' <<<"$COMMENTS_JSON")
+          if [ "$count" = "1" ] && [ "$first_body" = "$COMMENT_BODY" ]; then
+            phase "list comments: 1 comment, body matches" pass
+          else
+            phase "list comments" fail "count=$count body='$first_body'"
+          fi
+
+          # ---------------------------------------------------------------
+          # (e) Close via gh issue close --reason completed.
+          # ---------------------------------------------------------------
+          gh issue close "$NUM" --reason completed >/dev/null
+          phase "close issue --reason completed" pass
+
+          # ---------------------------------------------------------------
+          # (f) Read again — assert state=closed, state_reason=completed.
+          # ---------------------------------------------------------------
+          ISSUE_JSON=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${NUM}")
+          state=$(jq -r '.state' <<<"$ISSUE_JSON")
+          reason=$(jq -r '.state_reason // ""' <<<"$ISSUE_JSON")
+          if [ "$state" = "closed" ] && [ "$reason" = "completed" ]; then
+            phase "post-close read: state=closed, state_reason=completed" pass
+            # Issue is already closed cleanly; clear NUM so the trap doesn't
+            # try to re-close it as "not planned" and overwrite state_reason.
+            NUM=""
+          else
+            phase "post-close read" fail "state=$state state_reason=$reason"
+          fi
+
+          # ---------------------------------------------------------------
+          # Tally.
+          # ---------------------------------------------------------------
+          echo ""
+          echo "── Summary ────────────────────────────────────"
+          echo "passed: $pass"
+          echo "failed: $fail"
+          {
+            echo ""
+            echo "**$pass passed, $fail failed**"
+          } >> "$GITHUB_STEP_SUMMARY"
+          [ "$fail" -eq 0 ]

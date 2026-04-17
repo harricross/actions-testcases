@@ -209,6 +209,30 @@ or `tests/**`. They assert:
 aggregator and the test share one source of truth — there is no
 inline copy in `_aggregate.yml`.
 
+### `_issue-lifecycle-test.yml` — issue API probe
+
+A standalone probe that runs **weekly (Mon 06:00 UTC)** and on manual
+dispatch. It exercises the exact `gh` surface `_aggregate.yml` relies on
+to manage `suite-failure` issues: open → read → comment → list comments
+→ close `--reason completed` → re-read. Each phase prints a `PASS:` /
+`FAIL:` line and the workflow exits non-zero if any phase fails.
+
+- **What it proves:** `GITHUB_TOKEN` still has `issues: write`;
+  `gh issue create/comment/close` and `gh api repos/:o/:r/issues/...`
+  still behave as the aggregator expects. A green run means the next
+  hourly rollup can still open and close failure issues.
+- **Why it's not in `_scheduler.yml`:** it's its own probe with its own
+  trigger and label namespace (`selftest-lifecycle`). Wiring it into
+  the hourly rollup would let a token regression here mask every other
+  suite's status. It is therefore listed in the Test 3 exempt set in
+  `_self-test.yml` (carried in `.github/scripts/check-contracts.sh`).
+- **Reading a red weekly run:** check the failing `PASS/FAIL` line in
+  the job summary. Most likely cause is a permissions regression
+  (token can no longer write issues) or a `gh` CLI behaviour change on
+  the runner image. The cleanup `trap` closes the probe issue even on
+  failure, so a red run should not leave open `selftest-lifecycle`
+  issues — if it does, that itself is a finding worth investigating.
+
 ## How to debug a failing suite
 
 1. Open the `suite-failure`-labelled issue for the broken workflow → the
