@@ -1,0 +1,7 @@
+{"generated_at":"2026-01-01T01:00:00Z","suites":[
+  {"workflow":"green.yml","label":"stable_green","conclusion":"success","url":"r1g"},
+  {"workflow":"red.yml","label":"stable_red","conclusion":"failure","url":"r1r"},
+  {"workflow":"flapper.yml","label":"flapper","conclusion":"success","url":"r1f"},
+  {"workflow":"new_fail.yml","label":"new_failure_case","conclusion":"success","url":"r1n"},
+  {"workflow":"recover.yml","label":"recovery_case","conclusion":"failure","url":"r1c"}
+]}

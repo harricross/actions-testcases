@@ -171,6 +171,43 @@ results per workflow; a fat workflow loses the "what broke" signal.
 6. If the suite is gated, add the variable to `docs/ENTERPRISE-SETUP.md`
    and the README's gated-suites table.
 7. If it's gated, also gate the scheduler job: `if: vars.YOUR_GATE != ''`.
+8. **Add a row to the contracts table in `.github/workflows/_self-test.yml`**
+   asserting the substring(s) that prove the suite tests its declared
+   feature (e.g. for a new caching test, assert it contains
+   `actions/cache@`). The contracts are the line of defence against a
+   "fix" that silently removes the assertion logic.
+
+## Self-tests
+
+Static contract tests live in `.github/workflows/_self-test.yml` and run
+on every push that touches `.github/workflows/**`, `.github/scripts/**`,
+or `tests/**`. They assert:
+
+- **First-party-only invariant.** Every `uses:` is `./`, `actions/*`,
+  or `github/*`. Catches drift away from the rule the moment it lands.
+- **`timeout-minutes` set on every workflow.** Hung jobs burn
+  enterprise minutes; the scheduler can't cancel them in time.
+- **No orphan suites.** Every workflow under `.github/workflows/` is
+  either called from `_scheduler.yml` or in the documented exempt set
+  (orchestration, callees, trigger-only probes).
+- **Per-suite feature-token contracts.** Each suite must contain the
+  substring(s) that prove it tests what it claims to test (e.g.
+  `cache.yml` must reference `actions/cache@` and `restore-keys`).
+- **Local action.yml contracts.** The composite/docker/JS action suites
+  delegate to local actions under `.github/actions/<name>/action.yml` —
+  those are where `using:` lives, so we contract them there.
+- **`metrics.jq` and `highlights.jq` are syntactically valid jq** and
+  run cleanly against a real fixture snapshot.
+- **Metrics regression test.** `tests/run-metrics-tests.sh` runs
+  `metrics.jq` against `tests/fixtures/snapshots/*.json` (5 hourly
+  fixtures designed to exercise every code path: stable green, stable
+  red ≥3h, flapper, new-failure, and recovery) and asserts 39
+  specific values in the output. Catches any regression in uptime,
+  streak, flake, MTTR, or highlights logic.
+
+`metrics.jq` and `highlights.jq` live in `.github/scripts/` so the
+aggregator and the test share one source of truth — there is no
+inline copy in `_aggregate.yml`.
 
 ## How to debug a failing suite
 
