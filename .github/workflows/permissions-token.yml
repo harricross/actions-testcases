@@ -26,6 +26,7 @@ jobs:
       issues: read
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
     steps:
       - name: Confirm we cannot create an issue
         run: |
@@ -47,6 +48,7 @@ jobs:
       issues: write
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
     steps:
       - name: Create / comment / label / close
         run: |

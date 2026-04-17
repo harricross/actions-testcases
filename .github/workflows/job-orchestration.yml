@@ -74,11 +74,25 @@ jobs:
     needs: seed
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    continue-on-error: true
+    outputs:
+      step_outcome: ${{ steps.boom.outcome }}
+      step_conclusion: ${{ steps.boom.conclusion }}
     steps:
-      - run: |
+      - id: boom
+        # Step-level continue-on-error keeps the JOB conclusion=success
+        # (so this reusable workflow's bubble-up stays clean) while the
+        # step's outcome=failure documents that the failure happened.
+        continue-on-error: true
+        run: |
           echo "soft failure on purpose"
           exit 2
+      - name: Assert soft-fail semantics
+        run: |
+          set -euo pipefail
+          echo "outcome=${{ steps.boom.outcome }} conclusion=${{ steps.boom.conclusion }}"
+          [ "${{ steps.boom.outcome }}"    = "failure" ] || { echo "FAIL: expected outcome=failure"; exit 1; }
+          [ "${{ steps.boom.conclusion }}" = "success" ] || { echo "FAIL: expected conclusion=success (continue-on-error masked the failure)"; exit 1; }
+          echo "PASS: step continue-on-error masks failure as job success" >> "$GITHUB_STEP_SUMMARY"
 
   skipped:
     needs: seed
@@ -100,7 +114,10 @@ jobs:
           echo "merge result    = ${{ needs.merge.result }}"
           echo "soft_fail result= ${{ needs.soft_fail.result }}"
           echo "skipped result  = ${{ needs.skipped.result }}"
+          # soft_fail is success at the job level (its sole step was masked
+          # by continue-on-error); the failure-then-mask semantics are
+          # asserted inside soft_fail itself via step outcome/conclusion.
           [ "${{ needs.merge.result }}"     = "success" ] || { echo "FAIL: merge"; exit 1; }
-          [ "${{ needs.soft_fail.result }}" = "failure" ] || { echo "FAIL: soft_fail expected failure"; exit 1; }
+          [ "${{ needs.soft_fail.result }}" = "success" ] || { echo "FAIL: soft_fail expected success (job-level)"; exit 1; }
           [ "${{ needs.skipped.result }}"   = "skipped" ] || { echo "FAIL: skipped expected skipped"; exit 1; }
           echo "PASS: orchestration covers needs/if/continue-on-error/skipped" >> "$GITHUB_STEP_SUMMARY"
