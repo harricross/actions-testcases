@@ -286,10 +286,18 @@ jobs:
             echo '{"generated_at":"'"$TS"'","suites":[],"highlights":{"new_failures":[],"recoveries":[],"long_red":[],"flakiest":[],"low_uptime":[]}}' > ../metrics.json
           else
             jq -s --arg now "$TS" '
-              # Reduce all snapshots into per-suite history.
               # parse_ts converts ISO 8601 to epoch seconds.
               def parse_ts(s): s | sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601;
               def now_epoch: $now | parse_ts(.);
+              def uptime(arr): (arr | length) as $n
+                | if $n == 0 then null
+                  else ((arr | map(select(.conclusion=="success")) | length) * 1000 / $n | floor / 10)
+                  end;
+              # Flake count = success<->failure transitions in window.
+              def flakes(arr):
+                if (arr | length) < 2 then 0
+                else [range(1; arr|length) | select(arr[.].conclusion != arr[.-1].conclusion)] | length
+                end;
 
               ([ .[] as $snap | $snap.suites[] | select(.workflow != "_scheduler.yml")
                  | { workflow, label, conclusion, url, ts: $snap.generated_at } ]
@@ -303,22 +311,12 @@ jobs:
                   | ($hd | map(select(.conclusion == "success")) | length) as $succ
                   | ($hd | map(select(.conclusion == "failure")) | length) as $fail
                   | ($hd | length) as $tot
-                  # Window: last 24h / 7d / 30d as epoch deltas.
                   | (now_epoch - 86400)  as $t24
                   | (now_epoch - 604800) as $t7d
                   | (now_epoch - 2592000) as $t30d
                   | ($hd | map(select((.ts | parse_ts(.)) >= $t24)))  as $w24
                   | ($hd | map(select((.ts | parse_ts(.)) >= $t7d)))  as $w7d
                   | ($hd | map(select((.ts | parse_ts(.)) >= $t30d))) as $w30d
-                  | def uptime(arr): (arr | length) as $n
-                                     | if $n == 0 then null
-                                       else ((arr | map(select(.conclusion=="success")) | length) * 1000 / $n | floor / 10)
-                                       end;
-                  # Flake count = transitions in window (success<->failure boundaries).
-                  | def flakes(arr):
-                      if (arr | length) < 2 then 0
-                      else [range(1; arr|length) | select(arr[.].conclusion != arr[.-1].conclusion)] | length
-                      end;
                   # Current streak: trailing run of identical conclusions.
                   | (reduce ($hd | reverse[]) as $e ({c: $latest.conclusion, n: 0, done: false};
                       if .done then . elif $e.conclusion == .c then .n += 1 else .done = true end))
@@ -333,7 +331,7 @@ jobs:
                         else . end))
                     as $mttr
                   | {
-                      workflow,
+                      workflow: $latest.workflow,
                       label: $label,
                       latest: $latest,
                       prev: $prev,
@@ -356,17 +354,17 @@ jobs:
                   suites: $suites,
                   highlights: {
                     new_failures: ([$suites[] | select(.flipped and .latest.conclusion=="failure")
-                                   | {workflow,label,url:.latest.url}]),
+                                   | {workflow:.workflow,label:.label,url:.latest.url}]),
                     recoveries:   ([$suites[] | select(.flipped and .latest.conclusion=="success")
-                                   | {workflow,label,url:.latest.url}]),
+                                   | {workflow:.workflow,label:.label,url:.latest.url}]),
                     long_red:     ([$suites[] | select(.streak_state=="failure" and .streak_count>=3)
-                                   | {workflow,label,hours:.streak_count,url:.latest.url}]
+                                   | {workflow:.workflow,label:.label,hours:.streak_count,url:.latest.url}]
                                    | sort_by(-.hours)),
                     flakiest:     ([$suites[] | select(.flakes_7d>0)
-                                   | {workflow,label,flakes:.flakes_7d}]
+                                   | {workflow:.workflow,label:.label,flakes:.flakes_7d}]
                                    | sort_by(-.flakes) | .[0:5]),
                     low_uptime:   ([$suites[] | select(.uptime_24h != null and .uptime_24h < 95)
-                                   | {workflow,label,uptime_24h}]
+                                   | {workflow:.workflow,label:.label,uptime_24h:.uptime_24h}]
                                    | sort_by(.uptime_24h) | .[0:5])
                   }
                 }
