@@ -1,0 +1,63 @@
+name: cache
+
+# Exercises actions/cache save + restore semantics:
+#   - exact key hit on second run within the same OS
+#   - restore-keys fallback on prefix
+#   - per-OS keys (cross-OS won't match — that's the test of isolation)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  cache_probe:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compute cache key
+        id: k
+        # Stable per-day, per-OS key so we get a hit on the second hourly run
+        # without piling up entries forever.
+        run: |
+          set -euo pipefail
+          day=$(date -u +%Y%m%d)
+          printf 'key=suite-cache-%s-%s\n'      "${{ runner.os }}" "$day" >> "$GITHUB_OUTPUT"
+          printf 'restore=suite-cache-%s-\n'    "${{ runner.os }}"        >> "$GITHUB_OUTPUT"
+      - name: Restore (or miss) cache
+        id: c
+        uses: actions/cache@v4
+        with:
+          path: .suite-cache
+          key: ${{ steps.k.outputs.key }}
+          restore-keys: |
+            ${{ steps.k.outputs.restore }}
+      - name: Populate cache dir if needed
+        if: steps.c.outputs.cache-hit != 'true'
+        run: |
+          set -euo pipefail
+          mkdir -p .suite-cache
+          echo "populated on $(date -u +%FT%TZ) on ${{ runner.os }}" > .suite-cache/marker.txt
+      - name: Inspect cache state
+        run: |
+          set -euo pipefail
+          test -d .suite-cache && test -f .suite-cache/marker.txt
+          {
+            echo "## cache (${{ runner.os }})"
+            echo "- key: \`${{ steps.k.outputs.key }}\`"
+            echo "- cache-hit: \`${{ steps.c.outputs.cache-hit }}\`"
+            echo "- marker: $(cat .suite-cache/marker.txt)"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "PASS: cache save/restore exercised on ${{ runner.os }}" >> "$GITHUB_STEP_SUMMARY"

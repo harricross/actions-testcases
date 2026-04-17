@@ -1,0 +1,8 @@
+{
+  "name": "javascript-smoke",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local JS action under test. Zero runtime deps on purpose.",
+  "main": "index.js",
+  "license": "MIT"
+}

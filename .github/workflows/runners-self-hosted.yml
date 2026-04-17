@@ -1,0 +1,50 @@
+name: runners-self-hosted
+
+# Exercises a classic self-hosted runner. Gated on vars.SELF_HOSTED_LABEL.
+# The job uses runs-on: [self-hosted, "<label>"] so it pins to the labelled
+# runner pool (and never falls onto a hosted runner by accident).
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      enabled: ${{ steps.g.outputs.enabled }}
+    steps:
+      - id: g
+        run: |
+          set -euo pipefail
+          if [ -z "${{ vars.SELF_HOSTED_LABEL }}" ]; then
+            echo "SKIP: vars.SELF_HOSTED_LABEL is not set" >> "$GITHUB_STEP_SUMMARY"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  self_hosted_probe:
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: [self-hosted, "${{ vars.SELF_HOSTED_LABEL }}"]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe runner
+        run: |
+          set -euo pipefail
+          echo "RUNNER_NAME=${RUNNER_NAME:-unset}"
+          echo "RUNNER_OS=${RUNNER_OS:-unset}"
+          echo "RUNNER_ARCH=${RUNNER_ARCH:-unset}"
+          command -v git || { echo "FAIL: git not on PATH"; exit 1; }
+          command -v gh  || { echo "FAIL: gh not on PATH";  exit 1; }
+          echo "PASS: self-hosted runner ${RUNNER_NAME} on ${RUNNER_OS}/${RUNNER_ARCH}" >> "$GITHUB_STEP_SUMMARY"

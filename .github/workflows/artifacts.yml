@@ -1,0 +1,82 @@
+name: artifacts
+
+# Exercises actions/upload-artifact + actions/download-artifact (v4):
+#   - upload from a producer matrix (one artifact per OS)
+#   - cross-job download in a single OS
+#   - cross-OS download via name patterns
+#   - retention-days (kept short)
+#   - hidden files (include-hidden-files)
+#   - glob patterns
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  produce:
+    name: produce / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate files (with hidden + glob coverage)
+        run: |
+          set -euo pipefail
+          mkdir -p out/inner
+          printf 'hello from %s\n' "${{ matrix.os }}" > out/main.txt
+          printf 'inner on %s\n'   "${{ matrix.os }}" > out/inner/sub.txt
+          printf 'hidden on %s\n'  "${{ matrix.os }}" > out/.dotfile
+      - uses: actions/upload-artifact@v4
+        with:
+          name: probe-${{ matrix.os }}
+          path: |
+            out/**
+            !out/**/*.skip
+          retention-days: 1
+          include-hidden-files: true
+
+  consume_one:
+    needs: produce
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: probe-ubuntu-latest
+          path: dl/
+      - run: |
+          set -euo pipefail
+          test -f dl/main.txt
+          test -f dl/inner/sub.txt
+          test -f dl/.dotfile
+          grep -q "ubuntu-latest" dl/main.txt
+          echo "PASS: cross-job artifact (single name) downloaded with hidden + nested files" >> "$GITHUB_STEP_SUMMARY"
+
+  consume_all:
+    needs: produce
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: probe-*
+          path: dl/
+          merge-multiple: false
+      - run: |
+          set -euo pipefail
+          ls -R dl
+          for os in ubuntu-latest windows-latest macos-latest; do
+            test -f "dl/probe-${os}/main.txt" || { echo "FAIL: missing probe-${os}/main.txt"; exit 1; }
+          done
+          echo "PASS: pattern download collected all OS artifacts into per-name dirs" >> "$GITHUB_STEP_SUMMARY"

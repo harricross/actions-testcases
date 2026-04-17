@@ -1,0 +1,316 @@
+name: _aggregate
+
+# Reporting model C:
+#
+#   1. Triggered when _scheduler.yml completes. Reads the latest
+#      conclusion of every test workflow.
+#   2. Commits the snapshot to a dedicated `status` orphan branch as
+#      `status/YYYY/MM/DD/HH.json` and a rendered `status/YYYY/MM/DD/HH.md`.
+#      Updates daily and monthly rollup markdown for the same day/month.
+#   3. For each suite that is currently failing, opens (or comments on)
+#      a per-suite issue `actions-suite: failing — <suite>`. When that
+#      suite goes back to green on a subsequent run, the issue is auto-
+#      closed with a recovery comment.
+#
+# The `status` orphan branch keeps `main` clean — none of these commits
+# trigger triggers-push.yml because that workflow only listens to push on
+# `suite-probe/**`.
+#
+# See AGENTS.md for the full architecture.
+
+on:
+  workflow_run:
+    workflows: [_scheduler]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: read
+  issues: write
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: aggregate
+  cancel-in-progress: false
+
+env:
+  STATUS_BRANCH: status
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      # ------------------------------------------------------------------
+      # 1. Snapshot every test workflow's latest conclusion as JSON.
+      # ------------------------------------------------------------------
+      - name: Build snapshot
+        id: snap
+        run: |
+          set -euo pipefail
+          mapfile -t entries <<'EOF'
+          _scheduler.yml|Scheduler (top-level)
+          triggers-push.yml|triggers — push / PR
+          triggers-events.yml|triggers — issues / events
+          triggers-manual.yml|triggers — workflow_dispatch
+          triggers-workflow-call.yml|triggers — workflow_call
+          reusable-caller.yml|reusable workflow caller
+          triggers-workflow-run.yml|triggers — workflow_run
+          runners-os-matrix.yml|runners — ubuntu/win/mac
+          runners-self-hosted.yml|runners — self-hosted
+          runners-arc.yml|runners — Actions Runner Controller
+          runners-larger.yml|runners — larger hosted
+          runners-container.yml|runners — container + services
+          matrix-strategies.yml|matrix strategies
+          expressions-contexts.yml|expressions / contexts
+          job-orchestration.yml|job orchestration
+          concurrency.yml|concurrency
+          permissions-token.yml|permissions / GITHUB_TOKEN
+          secrets-and-vars.yml|secrets / vars / masking
+          environments-approval.yml|environments / approvals
+          oidc-cloud.yml|OIDC token issuance
+          artifacts.yml|artifacts (v4)
+          cache.yml|cache
+          workflow-commands.yml|workflow commands
+          step-summary-annotations.yml|step summary / annotations
+          composite-action-test.yml|composite action
+          docker-action-test.yml|docker action
+          javascript-action-test.yml|javascript action
+          artifacts-attestations.yml|build provenance attestations
+          dependency-graph.yml|dependency submission
+          pages-deploy.yml|pages deploy
+          EOF
+
+          ts_iso="$(date -u +%FT%TZ)"
+          year="$(date -u +%Y)"
+          month="$(date -u +%m)"
+          day="$(date -u +%d)"
+          hour="$(date -u +%H)"
+
+          tmp="$(mktemp)"
+          : > "$tmp"
+          for entry in "${entries[@]}"; do
+            wf="${entry%%|*}"
+            label="${entry##*|}"
+            row="$(gh run list --workflow "$wf" --limit 1 \
+              --json databaseId,conclusion,status,htmlUrl,createdAt \
+              --jq '.[0] | [(.databaseId|tostring), .conclusion, .status, .htmlUrl, .createdAt] | @tsv' \
+              2>/dev/null || true)"
+            if [ -z "$row" ]; then
+              row=$'0\tmissing\tmissing\t\t'
+            fi
+            printf '%s\t%s\t%s\n' "$wf" "$label" "$row" >> "$tmp"
+          done
+
+          jq -Rn \
+            --arg ts "$ts_iso" \
+            --arg run "$GITHUB_RUN_ID" \
+            --arg url "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --rawfile rows "$tmp" '
+            {
+              generated_at: $ts,
+              aggregator_run: $run,
+              aggregator_url: $url,
+              suites: ($rows | rtrimstr("\n") | split("\n") | map(
+                split("\t") |
+                {
+                  workflow:   .[0],
+                  label:      .[1],
+                  run_id:     ((.[2] // "0") | tonumber? // 0),
+                  conclusion: (.[3] // ""),
+                  status:     (.[4] // ""),
+                  url:        (.[5] // ""),
+                  created_at: (.[6] // "")
+                }
+              ))
+            }' > snapshot.json
+
+          {
+            echo "# Suite snapshot — ${ts_iso}"
+            echo ""
+            echo "Aggregator run: [${GITHUB_RUN_ID}](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+            echo ""
+            echo "| Suite | Conclusion | Run |"
+            echo "|---|---|---|"
+            jq -r '.suites[] |
+              ([.conclusion, .status] | map(select(length>0)) | (.[0] // "never run")) as $disp |
+              (if   $disp == "success"   then "✅"
+               elif $disp == "failure"   then "❌"
+               elif $disp == "cancelled" then "🟡"
+               elif $disp == "skipped"   then "⚪"
+               elif $disp == "missing"   then "⚪"
+               elif $disp == "never run" then "⚪"
+               else "🔵" end) as $icon |
+              "| \(.label) | \($icon) \($disp) | " +
+              (if (.url|length)>0 then "[run](\(.url))" else "—" end) + " |"
+            ' snapshot.json
+            echo ""
+            echo "Legend: ✅ success · ❌ failure · 🟡 cancelled · 🔵 in-progress · ⚪ skipped or never run"
+          } > snapshot.md
+
+          jq -r '.suites[]
+            | select(.workflow != "_scheduler.yml")
+            | select(.conclusion == "failure")
+            | "\(.workflow)\t\(.label)\t\(.url)"' snapshot.json > failing.tsv
+
+          {
+            echo "year=$year"
+            echo "month=$month"
+            echo "day=$day"
+            echo "hour=$hour"
+            echo "ts=$ts_iso"
+            echo "fail_count=$(wc -l < failing.tsv | tr -d ' ')"
+          } >> "$GITHUB_OUTPUT"
+
+      # ------------------------------------------------------------------
+      # 2. Commit snapshot + rollups to the `status` orphan branch.
+      # ------------------------------------------------------------------
+      - name: Check out (or create) status branch
+        run: |
+          set -euo pipefail
+          git config --global user.name  "actions-testcases[bot]"
+          git config --global user.email "actions-testcases@users.noreply.github.com"
+          mkdir status-branch
+          cd status-branch
+          git init -q -b "$STATUS_BRANCH"
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          # Token-based auth via x-access-token.
+          auth_header="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git config "http.${GITHUB_SERVER_URL}/.extraheader" "$auth_header"
+          if git fetch --depth 1 origin "$STATUS_BRANCH" 2>/dev/null; then
+            git checkout -q -B "$STATUS_BRANCH" FETCH_HEAD
+          else
+            cat > README.md <<'MD'
+          # status branch
+
+          Auto-generated by `.github/workflows/_aggregate.yml`. Each entry
+          under `status/YYYY/MM/DD/HH.{json,md}` is one snapshot of the
+          actions-testcases suite. Daily and monthly rollups live one
+          level up.
+
+          Do not edit by hand.
+          MD
+            git add README.md
+            git commit -q -m "init status branch"
+          fi
+
+      - name: Write snapshot + rollups + commit
+        env:
+          Y: ${{ steps.snap.outputs.year }}
+          M: ${{ steps.snap.outputs.month }}
+          D: ${{ steps.snap.outputs.day }}
+          H: ${{ steps.snap.outputs.hour }}
+          TS: ${{ steps.snap.outputs.ts }}
+        run: |
+          set -euo pipefail
+          cd status-branch
+          dest="status/${Y}/${M}/${D}"
+          mkdir -p "$dest"
+          cp ../snapshot.json "${dest}/${H}.json"
+          cp ../snapshot.md   "${dest}/${H}.md"
+
+          # ----- Daily rollup -----
+          daily="status/${Y}/${M}/${D}.md"
+          {
+            echo "# Day ${Y}-${M}-${D}"
+            echo ""
+            echo "| Hour | Failures | Snapshot |"
+            echo "|---|---|---|"
+            for f in $(ls "${dest}"/*.json 2>/dev/null | sort); do
+              h="$(basename "$f" .json)"
+              fails=$(jq '[.suites[] | select(.workflow != "_scheduler.yml") | select(.conclusion=="failure")] | length' "$f")
+              icon="✅"
+              [ "$fails" -gt 0 ] && icon="❌"
+              echo "| ${h}:00 | ${icon} ${fails} | [md](./${D}/${h}.md) · [json](./${D}/${h}.json) |"
+            done
+          } > "$daily"
+
+          # ----- Monthly rollup -----
+          monthly="status/${Y}/${M}.md"
+          {
+            echo "# Month ${Y}-${M}"
+            echo ""
+            echo "| Day | Failing snapshots / total | Detail |"
+            echo "|---|---|---|"
+            for ddir in $(ls -d "status/${Y}/${M}"/*/ 2>/dev/null | sort); do
+              dd="$(basename "$ddir")"
+              total=$(ls "${ddir}"/*.json 2>/dev/null | wc -l | tr -d ' ')
+              fails=0
+              for f in "${ddir}"*.json; do
+                [ -f "$f" ] || continue
+                n=$(jq '[.suites[] | select(.workflow != "_scheduler.yml") | select(.conclusion=="failure")] | length' "$f")
+                [ "$n" -gt 0 ] && fails=$(( fails + 1 ))
+              done
+              echo "| ${dd} | ${fails}/${total} | [day](./${M}/${dd}.md) |"
+            done
+          } > "$monthly"
+
+          # ----- Top-level index -----
+          {
+            echo "# actions-testcases — status history"
+            echo ""
+            echo "Latest snapshot: [\`${dest}/${H}.md\`](./${dest}/${H}.md) (${TS})"
+            echo ""
+            echo "## Recent months"
+            echo ""
+            for mfile in $(ls status/*/*.md 2>/dev/null | sort -r | head -24); do
+              echo "- [\`$mfile\`](./${mfile})"
+            done
+          } > status/README.md
+
+          git add status README.md 2>/dev/null || git add status
+          if git diff --cached --quiet; then
+            echo "No status changes to commit."
+          else
+            git commit -q -m "snapshot ${TS}" -m "aggregator run: ${GITHUB_RUN_ID}"
+            git push -q origin "$STATUS_BRANCH"
+          fi
+
+      # ------------------------------------------------------------------
+      # 3. Per-failing-suite issues. Open on first failure, comment on
+      #    repeat failures, auto-close on recovery.
+      # ------------------------------------------------------------------
+      - name: Ensure failure label exists
+        run: |
+          set -euo pipefail
+          gh label create suite-failure --color b60205 \
+            --description "Auto-managed: an actions-testcases suite is failing" 2>/dev/null || true
+
+      - name: Open / update issues for failing suites
+        run: |
+          set -euo pipefail
+          while IFS=$'\t' read -r wf label url; do
+            [ -n "$wf" ] || continue
+            title="actions-suite: failing — ${wf}"
+            body=$(printf '## %s is failing\n\nLatest run: %s\n\nAggregator: %s/%s/actions/runs/%s\n\nThis issue is auto-managed. It will close itself when the suite goes back to green.\n' \
+              "$label" "${url:-no-link}" "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+            num=$(gh issue list --label suite-failure --state open --search "in:title \"$title\"" \
+              --json number,title --jq ".[] | select(.title==\"$title\") | .number" | head -n1)
+            if [ -z "$num" ]; then
+              gh issue create --title "$title" --body "$body" --label suite-failure >/dev/null
+              echo "opened issue for $wf"
+            else
+              gh issue comment "$num" --body "Still failing as of $(date -u +%FT%TZ). Latest run: ${url:-no-link}"
+              echo "commented on existing issue #$num for $wf"
+            fi
+          done < failing.tsv
+
+      - name: Close issues for recovered suites
+        run: |
+          set -euo pipefail
+          failing_set="$(awk -F'\t' '{print $1}' failing.tsv | sort -u)"
+          gh issue list --label suite-failure --state open \
+            --json number,title --jq '.[] | "\(.number)\t\(.title)"' \
+          | while IFS=$'\t' read -r num title; do
+              wf="${title##*— }"
+              if ! grep -Fxq "$wf" <<<"$failing_set"; then
+                gh issue comment "$num" --body "✅ Recovered as of $(date -u +%FT%TZ). Auto-closing." || true
+                gh issue close "$num" --reason completed || true
+              fi
+            done

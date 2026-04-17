@@ -1,0 +1,98 @@
+name: expressions-contexts
+
+# Exercises every Actions expression context that's available outside of
+# special-purpose places (matrix, inputs, secrets are present but cannot be
+# enumerated wholesale — we assert presence of a probe value instead).
+#
+# Cross-OS to catch shell-quoting regressions in expression interpolation.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  PROBE_ENV: probe-from-workflow-env
+
+jobs:
+  contexts:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: produce
+        name: Produce a step output
+        env:
+          PROBE_ENV_STEP: probe-from-step-env
+        run: |
+          set -euo pipefail
+          echo "PROBE_ENV (workflow) = ${PROBE_ENV}"
+          echo "PROBE_ENV_STEP       = ${PROBE_ENV_STEP}"
+          printf 'value=%s\n' "produced-on-${{ matrix.os }}" >> "$GITHUB_OUTPUT"
+
+      - name: Assert all contexts populated
+        env:
+          GH_ACTOR: ${{ github.actor }}
+          GH_REPO: ${{ github.repository }}
+          GH_RUN: ${{ github.run_id }}
+          GH_SHA: ${{ github.sha }}
+          GH_REF: ${{ github.ref }}
+          GH_EVENT: ${{ github.event_name }}
+          GH_API: ${{ github.api_url }}
+          GH_SERVER: ${{ github.server_url }}
+          JOB_STATUS: ${{ job.status }}
+          STEP_OUT: ${{ steps.produce.outputs.value }}
+          RUNNER_OS_X: ${{ runner.os }}
+          RUNNER_ARCH_X: ${{ runner.arch }}
+          RUNNER_TEMP_X: ${{ runner.temp }}
+          MATRIX_OS: ${{ matrix.os }}
+          # vars context (presence-only; varies by repo).
+          HAS_GATE_VAR: ${{ vars.SELF_HOSTED_LABEL != '' || vars.ARC_RUNNER_LABEL != '' || vars.LARGER_RUNNER_LABEL != '' || vars.APPROVAL_ENVIRONMENT != '' || vars.ENABLE_PAGES != '' || vars.ENABLE_ATTESTATIONS != '' }}
+          HAS_TOKEN: ${{ secrets.GITHUB_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          fail=0
+          assert() {
+            name="$1"; value="$2"
+            if [ -z "$value" ] || [ "$value" = "null" ]; then
+              echo "FAIL: $name was empty"
+              fail=1
+            else
+              echo "PASS: $name = $value"
+            fi
+          }
+          assert "github.actor"       "$GH_ACTOR"
+          assert "github.repository"  "$GH_REPO"
+          assert "github.run_id"      "$GH_RUN"
+          assert "github.sha"         "$GH_SHA"
+          assert "github.ref"         "$GH_REF"
+          assert "github.event_name"  "$GH_EVENT"
+          assert "github.api_url"     "$GH_API"
+          assert "github.server_url"  "$GH_SERVER"
+          assert "job.status"         "$JOB_STATUS"
+          assert "steps.produce.outputs.value" "$STEP_OUT"
+          assert "runner.os"          "$RUNNER_OS_X"
+          assert "runner.arch"        "$RUNNER_ARCH_X"
+          assert "runner.temp"        "$RUNNER_TEMP_X"
+          assert "matrix.os"          "$MATRIX_OS"
+          assert "env.PROBE_ENV"      "$PROBE_ENV"
+          assert "secrets.GITHUB_TOKEN present" "$HAS_TOKEN"
+          # vars may legitimately all be empty on a fresh fork.
+          echo "vars gate observed: ${HAS_GATE_VAR}"
+          if [ $fail -ne 0 ]; then exit 1; fi
+          {
+            echo "## ${{ matrix.os }} contexts"
+            echo "All context expressions populated correctly."
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,13 @@
+name: javascript-smoke
+description: Local JavaScript action used by javascript-action-test.yml. Cross-OS, no runtime npm install.
+inputs:
+  payload:
+    description: Arbitrary string to round-trip
+    required: true
+    default: ping
+outputs:
+  reversed:
+    description: The payload reversed
+runs:
+  using: node20
+  main: index.js

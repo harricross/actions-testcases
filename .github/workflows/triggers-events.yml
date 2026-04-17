@@ -1,0 +1,80 @@
+name: triggers-events
+
+# Exercises:
+#   - repository_dispatch (driven by the scheduler)
+#   - issues (opened, labeled, closed)
+#   - issue_comment (created)
+#   - label (created/applied via issue events)
+#
+# The repository_dispatch entry point opens an issue, comments on it, labels
+# it, and closes it — so a single scheduler dispatch fans out into several
+# real event triggers. The on: issues / issue_comment jobs prove the
+# triggers fire by writing PASS lines to the step summary on their own runs.
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types: [suite-event-probe]
+  issues:
+    types: [opened, labeled, closed]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: triggers-events
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  drive:
+    if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Open, label, comment, close probe issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          ts="$(date -u +%Y%m%d-%H%M%S)"
+          title="[suite-probe] event coverage ${ts}"
+          body="Automated probe from triggers-events.yml run ${GITHUB_RUN_ID}."
+          num=$(gh issue create \
+            --title "$title" --body "$body" \
+            --label "suite-probe" 2>/dev/null \
+            | grep -oE '[0-9]+$' || true)
+          if [ -z "$num" ]; then
+            # Label may not exist yet — create it and retry without it.
+            gh label create suite-probe --color ededed --description "Probe issues" 2>/dev/null || true
+            num=$(gh issue create --title "$title" --body "$body" | grep -oE '[0-9]+$')
+            gh issue edit "$num" --add-label suite-probe
+          fi
+          gh issue comment "$num" --body "probe comment ${ts}"
+          gh issue close "$num" --comment "auto-close ${ts}"
+          echo "PASS: issue lifecycle exercised on #${num}" >> "$GITHUB_STEP_SUMMARY"
+
+  on_issues:
+    if: github.event_name == 'issues' && contains(github.event.issue.title, '[suite-probe]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: |
+          set -euo pipefail
+          echo "PASS: issues trigger fired (action=${{ github.event.action }}, #${{ github.event.issue.number }})" >> "$GITHUB_STEP_SUMMARY"
+
+  on_issue_comment:
+    if: github.event_name == 'issue_comment' && contains(github.event.issue.title, '[suite-probe]')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: |
+          set -euo pipefail
+          echo "PASS: issue_comment trigger fired on #${{ github.event.issue.number }}" >> "$GITHUB_STEP_SUMMARY"

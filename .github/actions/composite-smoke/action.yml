@@ -1,0 +1,35 @@
+name: composite-smoke
+description: Local composite action used by composite-action-test.yml. Echoes inputs and produces an output.
+inputs:
+  message:
+    description: Message to echo
+    required: true
+    default: hello
+  multiplier:
+    description: How many times to echo
+    required: false
+    default: "1"
+outputs:
+  echoed:
+    description: The final composed string
+    value: ${{ steps.compose.outputs.echoed }}
+runs:
+  using: composite
+  steps:
+    - id: compose
+      shell: bash
+      run: |
+        set -euo pipefail
+        out=""
+        for i in $(seq 1 "${{ inputs.multiplier }}"); do
+          out="${out}${{ inputs.message }} "
+        done
+        out="${out%% }"
+        printf 'echoed=%s\n' "$out" >> "$GITHUB_OUTPUT"
+        printf 'composite-smoke produced: %s\n' "$out"
+    - shell: bash
+      run: |
+        set -euo pipefail
+        printf '## composite-smoke\nInput: `%s` × %s → `%s`\n' \
+          "${{ inputs.message }}" "${{ inputs.multiplier }}" \
+          "${{ steps.compose.outputs.echoed }}" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,141 @@
+name: triggers-push
+
+# Exercises push, pull_request, and branch/path filters.
+#
+# How it's invoked:
+#  - workflow_dispatch: a human (or the scheduler) kicks this. It then
+#    creates a short-lived branch via gh api, which fires the `push:`
+#    trigger below. The push job opens a PR (which fires `pull_request:`),
+#    waits for both to record their conclusions, then deletes the branch.
+#  - push: fires for the temporary branch only.
+#  - pull_request: fires when the temp branch opens its PR.
+#
+# Path filters: the temp branch always touches `suite/probe.txt` so the
+# `paths:` filter is exercised.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "suite-probe/**"
+    paths:
+      - "suite/**"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "suite/**"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: triggers-push
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  drive:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create probe branch and PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          ts="$(date -u +%Y%m%d-%H%M%S)"
+          branch="suite-probe/${ts}-${GITHUB_RUN_ID}"
+          git config user.name  "actions-testcases[bot]"
+          git config user.email "actions-testcases@users.noreply.github.com"
+          git checkout -b "$branch"
+          mkdir -p suite
+          printf 'probe %s\n' "$ts" > suite/probe.txt
+          git add suite/probe.txt
+          git commit -m "suite: probe ${ts}"
+          git push origin "$branch"
+          gh pr create \
+            --base main --head "$branch" \
+            --title "suite: probe ${ts}" \
+            --body "Automated push/PR trigger probe. Auto-closed by triggers-push.yml." \
+            --label "suite-probe" 2>/dev/null || \
+          gh pr create \
+            --base main --head "$branch" \
+            --title "suite: probe ${ts}" \
+            --body "Automated push/PR trigger probe. Auto-closed by triggers-push.yml."
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+        id: probe
+      - name: Wait for push + pull_request runs to complete
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.probe.outputs.branch }}
+        run: |
+          set -euo pipefail
+          deadline=$(( $(date +%s) + 300 ))
+          want_events="push pull_request"
+          while [ "$(date +%s)" -lt "$deadline" ]; do
+            ok=true
+            for ev in $want_events; do
+              count=$(gh run list \
+                --workflow triggers-push.yml \
+                --branch "$BRANCH" \
+                --event "$ev" \
+                --limit 1 --json status,conclusion \
+                --jq '[.[] | select(.status=="completed")] | length')
+              if [ "$count" -lt 1 ]; then ok=false; fi
+            done
+            if $ok; then break; fi
+            sleep 10
+          done
+          for ev in $want_events; do
+            concl=$(gh run list \
+              --workflow triggers-push.yml \
+              --branch "$BRANCH" \
+              --event "$ev" \
+              --limit 1 --json conclusion --jq '.[0].conclusion // "missing"')
+            echo "PASS: $ev fired with conclusion=${concl}" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$concl" != "success" ]; then
+              echo "::error::triggers-push: $ev did not succeed (conclusion=$concl)"
+              exit 1
+            fi
+          done
+      - name: Cleanup probe branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.probe.outputs.branch }}
+        run: |
+          set -euo pipefail
+          if [ -n "${BRANCH:-}" ]; then
+            pr=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number // empty')
+            if [ -n "$pr" ]; then gh pr close "$pr" --delete-branch || true; fi
+            git push origin --delete "$BRANCH" 2>/dev/null || true
+          fi
+
+  on_push:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          test -f suite/probe.txt
+          echo "PASS: push trigger fired on $GITHUB_REF for $(cat suite/probe.txt)" >> "$GITHUB_STEP_SUMMARY"
+
+  on_pull_request:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          test -f suite/probe.txt
+          echo "PASS: pull_request trigger fired for #${{ github.event.pull_request.number }}" >> "$GITHUB_STEP_SUMMARY"

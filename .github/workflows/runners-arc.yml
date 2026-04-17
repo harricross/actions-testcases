@@ -1,0 +1,124 @@
+name: runners-arc
+
+# Exercises Actions Runner Controller (ARC). Gated on vars.ARC_RUNNER_LABEL.
+# Assertions:
+#   1. Runner name matches an ARC pod-name pattern (label + suffix).
+#   2. Hostname looks like a k8s pod (matches /etc/hostname).
+#   3. KUBERNETES_SERVICE_HOST is exported (job is in-cluster).
+#   4. Ephemeral: a second job runs and reports a different RUNNER_NAME.
+#   5. Workspace is fresh (no leftover files from a prior run).
+#   6. A container: job also lands on ARC (proves DinD / container support).
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      enabled: ${{ steps.g.outputs.enabled }}
+      label: ${{ vars.ARC_RUNNER_LABEL }}
+    steps:
+      - id: g
+        run: |
+          set -euo pipefail
+          if [ -z "${{ vars.ARC_RUNNER_LABEL }}" ]; then
+            echo "SKIP: vars.ARC_RUNNER_LABEL is not set" >> "$GITHUB_STEP_SUMMARY"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  arc_first:
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: [self-hosted, "${{ vars.ARC_RUNNER_LABEL }}"]
+    timeout-minutes: 10
+    outputs:
+      runner_name: ${{ steps.probe.outputs.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: probe
+        env:
+          ARC_LABEL: ${{ needs.gate.outputs.label }}
+        run: |
+          set -euo pipefail
+          name="${RUNNER_NAME:-unset}"
+          echo "name=${name}" >> "$GITHUB_OUTPUT"
+          host="$(cat /etc/hostname 2>/dev/null || hostname)"
+          echo "RUNNER_NAME=${name}"
+          echo "hostname=${host}"
+          # 1: name should contain the ARC label as a prefix or substring.
+          case "${name}" in
+            *"${ARC_LABEL}"*) ;;
+            *) echo "FAIL: RUNNER_NAME ${name} does not include ARC label ${ARC_LABEL}"; exit 1 ;;
+          esac
+          # 2: hostname looks like a k8s pod (ends in -<5+ alnum>).
+          case "${host}" in
+            *-?????*) ;;
+            *) echo "FAIL: hostname ${host} does not look pod-like"; exit 1 ;;
+          esac
+          # 3: in-cluster env var.
+          if [ -z "${KUBERNETES_SERVICE_HOST:-}" ]; then
+            echo "FAIL: KUBERNETES_SERVICE_HOST not set — job is not in-cluster"
+            exit 1
+          fi
+          # 5: workspace is fresh.
+          leftovers="$(find "$GITHUB_WORKSPACE" -maxdepth 2 -name '.suite-leftover' 2>/dev/null || true)"
+          if [ -n "$leftovers" ]; then
+            echo "FAIL: workspace not fresh: ${leftovers}"; exit 1
+          fi
+          touch "$GITHUB_WORKSPACE/.suite-leftover"
+          {
+            echo "## ARC first job"
+            echo "- runner: \`${name}\`"
+            echo "- pod: \`${host}\`"
+            echo "- in-cluster: yes"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  arc_second:
+    needs: [gate, arc_first]
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: [self-hosted, "${{ vars.ARC_RUNNER_LABEL }}"]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assert ephemerality and fresh workspace
+        env:
+          PREV_NAME: ${{ needs.arc_first.outputs.runner_name }}
+        run: |
+          set -euo pipefail
+          name="${RUNNER_NAME:-unset}"
+          echo "previous=${PREV_NAME} current=${name}"
+          if [ "${name}" = "${PREV_NAME}" ]; then
+            echo "FAIL: ARC reused the same runner name (${name}); not ephemeral"
+            exit 1
+          fi
+          if [ -e "$GITHUB_WORKSPACE/.suite-leftover" ]; then
+            echo "FAIL: leftover file from previous run is present — workspace not fresh"
+            exit 1
+          fi
+          echo "PASS: ARC ephemeral pod (${name} != ${PREV_NAME}); workspace clean" >> "$GITHUB_STEP_SUMMARY"
+
+  arc_container_job:
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: [self-hosted, "${{ vars.ARC_RUNNER_LABEL }}"]
+    timeout-minutes: 10
+    container:
+      image: alpine:3.20
+    steps:
+      - run: |
+          set -eu
+          apk add --no-cache bash >/dev/null 2>&1 || true
+          uname -a
+          echo "PASS: container job ran on ARC under image alpine:3.20" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,57 @@
+name: artifacts-attestations
+
+# Exercises actions/attest-build-provenance. Gated on vars.ENABLE_ATTESTATIONS
+# (requires GHES 3.13+ or GHEC).
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  attestations: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      enabled: ${{ steps.g.outputs.enabled }}
+    steps:
+      - id: g
+        run: |
+          set -euo pipefail
+          if [ "${{ vars.ENABLE_ATTESTATIONS }}" != "true" ]; then
+            echo "SKIP: vars.ENABLE_ATTESTATIONS is not 'true'" >> "$GITHUB_STEP_SUMMARY"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  attest:
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build a deterministic artifact
+        id: build
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          printf 'attestation probe %s\n' "${GITHUB_SHA}" > dist/probe.bin
+          digest=$(sha256sum dist/probe.bin | awk '{print $1}')
+          echo "digest=$digest" >> "$GITHUB_OUTPUT"
+      - uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: dist/probe.bin
+      - name: Confirm
+        run: |
+          set -euo pipefail
+          echo "PASS: build provenance attested for digest ${{ steps.build.outputs.digest }}" >> "$GITHUB_STEP_SUMMARY"

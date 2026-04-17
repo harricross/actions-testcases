@@ -1,0 +1,96 @@
+name: _scheduler
+
+# Top-level orchestrator. Runs hourly, plus on demand. Most suites are
+# invoked via `uses:` so their jobs nest under the scheduler run; a few
+# triggers can only be exercised via their real event, so they're
+# dispatched out-of-band.
+#
+# See AGENTS.md for the full architecture.
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+  issues: write
+
+defaults:
+  run:
+    shell: bash
+
+concurrency:
+  group: scheduler
+  cancel-in-progress: false
+
+jobs:
+  # ----- Suites invoked directly as reusable workflows -------------------
+  triggers_workflow_call:
+    uses: ./.github/workflows/triggers-workflow-call.yml
+    secrets: inherit
+    with:
+      label: from-scheduler
+      count: 1
+      flag: true
+
+  reusable_caller:
+    uses: ./.github/workflows/reusable-caller.yml
+    secrets: inherit
+
+  runners_os_matrix:    { uses: ./.github/workflows/runners-os-matrix.yml,      secrets: inherit }
+  runners_self_hosted:  { uses: ./.github/workflows/runners-self-hosted.yml,    secrets: inherit }
+  runners_arc:          { uses: ./.github/workflows/runners-arc.yml,            secrets: inherit }
+  runners_larger:       { uses: ./.github/workflows/runners-larger.yml,         secrets: inherit }
+  runners_container:    { uses: ./.github/workflows/runners-container.yml,      secrets: inherit }
+  matrix_strategies:    { uses: ./.github/workflows/matrix-strategies.yml,      secrets: inherit }
+  expressions_contexts: { uses: ./.github/workflows/expressions-contexts.yml,   secrets: inherit }
+  job_orchestration:    { uses: ./.github/workflows/job-orchestration.yml,      secrets: inherit }
+  concurrency_suite:    { uses: ./.github/workflows/concurrency.yml,            secrets: inherit }
+  permissions_token:    { uses: ./.github/workflows/permissions-token.yml,      secrets: inherit }
+  secrets_and_vars:     { uses: ./.github/workflows/secrets-and-vars.yml,       secrets: inherit }
+  environments_app:     { uses: ./.github/workflows/environments-approval.yml,  secrets: inherit }
+  oidc_cloud:           { uses: ./.github/workflows/oidc-cloud.yml,             secrets: inherit }
+  artifacts_suite:      { uses: ./.github/workflows/artifacts.yml,              secrets: inherit }
+  cache_suite:          { uses: ./.github/workflows/cache.yml,                  secrets: inherit }
+  workflow_commands:    { uses: ./.github/workflows/workflow-commands.yml,      secrets: inherit }
+  step_summary:         { uses: ./.github/workflows/step-summary-annotations.yml, secrets: inherit }
+  composite_action:     { uses: ./.github/workflows/composite-action-test.yml,  secrets: inherit }
+  docker_action:        { uses: ./.github/workflows/docker-action-test.yml,     secrets: inherit }
+  javascript_action:    { uses: ./.github/workflows/javascript-action-test.yml, secrets: inherit }
+  attestations:         { uses: ./.github/workflows/artifacts-attestations.yml, secrets: inherit }
+  dependency_graph:     { uses: ./.github/workflows/dependency-graph.yml,       secrets: inherit }
+  pages_deploy:         { uses: ./.github/workflows/pages-deploy.yml,           secrets: inherit }
+
+  # ----- Suites that need their real event ------------------------------
+  side_channels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Dispatch triggers-manual (workflow_dispatch only)
+        run: |
+          set -euo pipefail
+          gh workflow run triggers-manual.yml \
+            -f a_string=from-scheduler \
+            -f a_choice=beta \
+            -f a_boolean=true \
+            -f a_number=99
+          echo "PASS: dispatched triggers-manual" >> "$GITHUB_STEP_SUMMARY"
+      - name: Dispatch triggers-push (which self-drives push/PR)
+        run: |
+          set -euo pipefail
+          gh workflow run triggers-push.yml
+          echo "PASS: dispatched triggers-push" >> "$GITHUB_STEP_SUMMARY"
+      - name: Emit repository_dispatch for triggers-events
+        run: |
+          set -euo pipefail
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${GITHUB_REPOSITORY}/dispatches" \
+            -f event_type=suite-event-probe \
+            -f 'client_payload[run_id]=${{ github.run_id }}'
+          echo "PASS: emitted repository_dispatch suite-event-probe" >> "$GITHUB_STEP_SUMMARY"

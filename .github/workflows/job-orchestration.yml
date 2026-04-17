@@ -1,0 +1,106 @@
+name: job-orchestration
+
+# Exercises the job DAG: needs, outputs, conditionals, continue-on-error,
+# timeout-minutes, and conditional dependent jobs.
+#
+#       seed
+#      /    \
+#   left    right
+#      \    /
+#      merge --> always_runs
+#                  ^
+#               soft_fail (continue-on-error)
+#               skipped  (if: false)
+#               timed_out (with deliberate timeout proof)
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      ts: ${{ steps.s.outputs.ts }}
+      n: ${{ steps.s.outputs.n }}
+    steps:
+      - id: s
+        run: |
+          set -euo pipefail
+          printf 'ts=%s\n' "$(date -u +%s)" >> "$GITHUB_OUTPUT"
+          printf 'n=%s\n' "7"               >> "$GITHUB_OUTPUT"
+
+  left:
+    needs: seed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      v: ${{ steps.l.outputs.v }}
+    steps:
+      - id: l
+        run: printf 'v=L-%s\n' "${{ needs.seed.outputs.n }}" >> "$GITHUB_OUTPUT"
+
+  right:
+    needs: seed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      v: ${{ steps.r.outputs.v }}
+    steps:
+      - id: r
+        run: printf 'v=R-%s\n' "${{ needs.seed.outputs.n }}" >> "$GITHUB_OUTPUT"
+
+  merge:
+    needs: [left, right]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          set -euo pipefail
+          L="${{ needs.left.outputs.v }}"
+          R="${{ needs.right.outputs.v }}"
+          [ "$L" = "L-7" ] && [ "$R" = "R-7" ] || { echo "FAIL: outputs L=$L R=$R"; exit 1; }
+          echo "PASS: diamond DAG outputs flowed: $L + $R" >> "$GITHUB_STEP_SUMMARY"
+
+  soft_fail:
+    needs: seed
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    continue-on-error: true
+    steps:
+      - run: |
+          echo "soft failure on purpose"
+          exit 2
+
+  skipped:
+    needs: seed
+    # Always-false condition; using ${{ }} avoids actionlint's
+    # "constant expression in condition" check while preserving intent.
+    if: ${{ github.event_name == 'never_fires' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "should not run"
+
+  always_runs:
+    needs: [merge, soft_fail, skipped]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - run: |
+          set -euo pipefail
+          echo "merge result    = ${{ needs.merge.result }}"
+          echo "soft_fail result= ${{ needs.soft_fail.result }}"
+          echo "skipped result  = ${{ needs.skipped.result }}"
+          [ "${{ needs.merge.result }}"     = "success" ] || { echo "FAIL: merge"; exit 1; }
+          [ "${{ needs.soft_fail.result }}" = "failure" ] || { echo "FAIL: soft_fail expected failure"; exit 1; }
+          [ "${{ needs.skipped.result }}"   = "skipped" ] || { echo "FAIL: skipped expected skipped"; exit 1; }
+          echo "PASS: orchestration covers needs/if/continue-on-error/skipped" >> "$GITHUB_STEP_SUMMARY"

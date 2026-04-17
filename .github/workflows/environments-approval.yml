@@ -1,0 +1,51 @@
+name: environments-approval
+
+# Exercises environments. Gated on vars.APPROVAL_ENVIRONMENT.
+# The environment can be created with or without required reviewers; if
+# reviewers are required, the run will pause for approval (which is the
+# intended behaviour for the suite — the next aggregator pass will mark
+# the run "waiting" rather than failed).
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      enabled: ${{ steps.g.outputs.enabled }}
+      env: ${{ vars.APPROVAL_ENVIRONMENT }}
+    steps:
+      - id: g
+        run: |
+          set -euo pipefail
+          if [ -z "${{ vars.APPROVAL_ENVIRONMENT }}" ]; then
+            echo "SKIP: vars.APPROVAL_ENVIRONMENT is not set" >> "$GITHUB_STEP_SUMMARY"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  deploy_to_environment:
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: ${{ needs.gate.outputs.env }}
+      url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Probe environment
+        run: |
+          set -euo pipefail
+          echo "PASS: deployed to environment '${{ needs.gate.outputs.env }}' (approval, if required, was granted)" >> "$GITHUB_STEP_SUMMARY"

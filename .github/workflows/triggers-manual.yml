@@ -1,0 +1,68 @@
+name: triggers-manual
+
+# Exercises workflow_dispatch with every input type.
+# Cannot be invoked via workflow_call (workflow_dispatch is not callable),
+# so the scheduler reaches this via `gh workflow run`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      a_string:
+        description: A free-form string
+        type: string
+        required: false
+        default: hello
+      a_choice:
+        description: A choice
+        type: choice
+        required: true
+        options: [alpha, beta, gamma]
+        default: alpha
+      a_boolean:
+        description: A boolean flag
+        type: boolean
+        required: false
+        default: false
+      a_number:
+        description: A number (string under the hood)
+        type: number
+        required: false
+        default: "42"
+      an_environment:
+        description: An environment name
+        type: environment
+        required: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  echo_and_assert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Echo every input
+        run: |
+          set -euo pipefail
+          echo "a_string      = ${{ inputs.a_string }}"
+          echo "a_choice      = ${{ inputs.a_choice }}"
+          echo "a_boolean     = ${{ inputs.a_boolean }}"
+          echo "a_number      = ${{ inputs.a_number }}"
+          echo "an_environment= ${{ inputs.an_environment }}"
+      - name: Assert types
+        env:
+          S: ${{ inputs.a_string }}
+          C: ${{ inputs.a_choice }}
+          B: ${{ inputs.a_boolean }}
+          N: ${{ inputs.a_number }}
+        run: |
+          set -euo pipefail
+          [ -n "$S" ] || { echo "FAIL: a_string empty"; exit 1; }
+          case "$C" in alpha|beta|gamma) ;; *) echo "FAIL: choice not in set: $C"; exit 1 ;; esac
+          case "$B" in true|false) ;; *) echo "FAIL: boolean not literal: $B"; exit 1 ;; esac
+          case "$N" in ''|*[!0-9.-]*) echo "FAIL: number not numeric: $N"; exit 1 ;; esac
+          echo "PASS: workflow_dispatch inputs round-tripped" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,70 @@
+name: oidc-cloud
+
+# Exercises OIDC token issuance. Requests an ID token from the Actions
+# OIDC provider, decodes the JWT payload, and asserts standard claims
+# (iss, aud, sub, repository, ref). Does NOT exchange the token with any
+# cloud — the suite's job is to verify Actions issues a usable token.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  request_and_assert:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Request OIDC token
+        id: req
+        run: |
+          set -euo pipefail
+          [ -n "${ACTIONS_ID_TOKEN_REQUEST_URL:-}" ] || { echo "FAIL: ACTIONS_ID_TOKEN_REQUEST_URL not set (id-token: write missing?)"; exit 1; }
+          [ -n "${ACTIONS_ID_TOKEN_REQUEST_TOKEN:-}" ] || { echo "FAIL: ACTIONS_ID_TOKEN_REQUEST_TOKEN not set"; exit 1; }
+          token=$(curl -fsSL \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=actions-testcases-suite" \
+            | jq -r '.value')
+          [ -n "$token" ] && [ "$token" != "null" ] || { echo "FAIL: empty OIDC token"; exit 1; }
+          # Mask the token so it never lands in logs.
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+      - name: Decode JWT payload and assert claims
+        env:
+          TOKEN: ${{ steps.req.outputs.token }}
+        run: |
+          set -euo pipefail
+          payload_b64=$(printf '%s' "$TOKEN" | cut -d. -f2)
+          # base64url -> base64 (pad).
+          pad=$(( 4 - ${#payload_b64} % 4 ))
+          if [ "$pad" -lt 4 ]; then payload_b64="${payload_b64}$(printf '=%.0s' $(seq 1 $pad))"; fi
+          payload_b64=$(printf '%s' "$payload_b64" | tr '_-' '/+')
+          payload=$(printf '%s' "$payload_b64" | base64 -d 2>/dev/null)
+          echo "$payload" | jq .
+          iss=$(echo "$payload" | jq -r .iss)
+          aud=$(echo "$payload" | jq -r .aud)
+          sub=$(echo "$payload" | jq -r .sub)
+          repo=$(echo "$payload" | jq -r .repository)
+          ref=$(echo "$payload" | jq -r .ref)
+          [ "$aud" = "actions-testcases-suite" ] || { echo "FAIL: aud=$aud"; exit 1; }
+          [ -n "$iss" ] && [ "$iss" != "null" ]   || { echo "FAIL: iss missing"; exit 1; }
+          [ -n "$sub" ] && [ "$sub" != "null" ]   || { echo "FAIL: sub missing"; exit 1; }
+          [ "$repo" = "${GITHUB_REPOSITORY}" ]    || { echo "FAIL: repository=$repo expected ${GITHUB_REPOSITORY}"; exit 1; }
+          [ -n "$ref" ] && [ "$ref" != "null" ]   || { echo "FAIL: ref missing"; exit 1; }
+          {
+            echo "## OIDC claims"
+            echo "- iss: \`$iss\`"
+            echo "- aud: \`$aud\`"
+            echo "- sub: \`$sub\`"
+            echo "- repository: \`$repo\`"
+            echo "- ref: \`$ref\`"
+            echo ""
+            echo "PASS: OIDC token issued with expected claims"
+          } >> "$GITHUB_STEP_SUMMARY"

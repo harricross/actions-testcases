@@ -1,0 +1,62 @@
+name: runners-os-matrix
+
+# Exercises ubuntu/windows/macos hosted runners, plus the bash, pwsh, and
+# cmd shells. Each leg checks tool availability and OS-reported identity.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  os_shell:
+    name: ${{ matrix.os }} / ${{ matrix.shell }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            shell: bash
+          - os: macos-latest
+            shell: bash
+          - os: windows-latest
+            shell: bash
+          - os: windows-latest
+            shell: pwsh
+          - os: windows-latest
+            shell: cmd
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Probe (bash)
+        if: matrix.shell == 'bash'
+        shell: bash
+        run: |
+          set -euo pipefail
+          uname -a
+          command -v git
+          command -v gh
+          echo "PASS: ${{ matrix.os }} bash ok" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Probe (pwsh)
+        if: matrix.shell == 'pwsh'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Write-Host "PSVersion: $($PSVersionTable.PSVersion)"
+          Get-Command git | Out-Null
+          Get-Command gh  | Out-Null
+          "PASS: ${{ matrix.os }} pwsh ok" | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+
+      - name: Probe (cmd)
+        if: matrix.shell == 'cmd'
+        shell: cmd
+        run: |
+          ver
+          where git || exit /b 1
+          where gh  || exit /b 1
+          echo PASS: ${{ matrix.os }} cmd ok>> %GITHUB_STEP_SUMMARY%

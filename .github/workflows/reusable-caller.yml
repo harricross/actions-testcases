@@ -1,0 +1,33 @@
+name: reusable-caller
+
+# Calls triggers-workflow-call.yml with `secrets: inherit`. Exists so the
+# triggers-workflow-run.yml workflow has a deterministic upstream to chain
+# off, and to prove that callers can pass through secrets and consume
+# reusable-workflow outputs.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  call_reusable:
+    uses: ./.github/workflows/triggers-workflow-call.yml
+    secrets: inherit
+    with:
+      label: from-reusable-caller
+      count: 5
+      flag: true
+
+  consume_output:
+    needs: call_reusable
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - run: |
+          set -euo pipefail
+          out="${{ needs.call_reusable.outputs.summary }}"
+          [ -n "$out" ] || { echo "FAIL: reusable workflow produced no output"; exit 1; }
+          echo "PASS: caller consumed reusable-workflow output: $out" >> "$GITHUB_STEP_SUMMARY"

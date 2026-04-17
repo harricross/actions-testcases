@@ -1,0 +1,65 @@
+name: dependency-graph
+
+# Exercises the dependency submission API by posting a tiny SBOM via gh api.
+# No third-party action; we craft and POST the snapshot ourselves.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build minimal snapshot
+        id: snap
+        run: |
+          set -euo pipefail
+          ts=$(date -u +%FT%TZ)
+          cat > snapshot.json <<JSON
+          {
+            "version": 0,
+            "sha": "${GITHUB_SHA}",
+            "ref": "${GITHUB_REF}",
+            "job": { "correlator": "actions-testcases-dep-graph", "id": "${GITHUB_RUN_ID}" },
+            "detector": {
+              "name": "actions-testcases",
+              "version": "1.0.0",
+              "url": "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+            },
+            "scanned": "${ts}",
+            "manifests": {
+              "probe": {
+                "name": "probe-manifest",
+                "file": { "source_location": "docs/FEATURE-MATRIX.md" },
+                "resolved": {
+                  "actions-testcases-probe": {
+                    "package_url": "pkg:generic/actions-testcases-probe@1.0.0",
+                    "relationship": "direct",
+                    "scope": "runtime"
+                  }
+                }
+              }
+            }
+          }
+          JSON
+      - name: Submit snapshot
+        run: |
+          set -euo pipefail
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${GITHUB_REPOSITORY}/dependency-graph/snapshots" \
+            --input snapshot.json
+          echo "PASS: dependency snapshot submitted" >> "$GITHUB_STEP_SUMMARY"

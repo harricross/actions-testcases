@@ -1,0 +1,101 @@
+name: concurrency
+
+# Exercises concurrency groups + cancel-in-progress. The drive job kicks
+# two back-to-back self-dispatches into the same concurrency group; the
+# first one's slow_step should be cancelled by the second.
+#
+# Cross-OS smoke: a separate matrix job confirms a per-OS group does not
+# self-cancel across distinct OSes.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        required: false
+        default: drive
+        options: [drive, slow]
+
+permissions:
+  contents: read
+  actions: write
+
+defaults:
+  run:
+    shell: bash
+
+# Group is parameterised by mode so the drive job can dispatch slow runs
+# that contend with each other but not with the driver.
+concurrency:
+  group: concurrency-${{ inputs.mode || 'drive' }}
+  cancel-in-progress: ${{ inputs.mode == 'slow' }}
+
+jobs:
+  slow:
+    if: inputs.mode == 'slow'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Sleep so the next dispatch can cancel us
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            echo "tick $i"
+            sleep 2
+          done
+          echo "PASS: slow run completed without cancellation" >> "$GITHUB_STEP_SUMMARY"
+
+  drive:
+    if: inputs.mode == 'drive' || inputs.mode == ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fire two slow runs in the same group
+        run: |
+          set -euo pipefail
+          gh workflow run concurrency.yml -f mode=slow
+          sleep 5
+          gh workflow run concurrency.yml -f mode=slow
+      - name: Wait and assert one was cancelled
+        run: |
+          set -euo pipefail
+          deadline=$(( $(date +%s) + 240 ))
+          while [ "$(date +%s)" -lt "$deadline" ]; do
+            done_count=$(gh run list \
+              --workflow concurrency.yml \
+              --event workflow_dispatch \
+              --limit 5 --json status,conclusion,createdAt \
+              --jq '[.[] | select(.status=="completed")] | length')
+            if [ "$done_count" -ge 2 ]; then break; fi
+            sleep 10
+          done
+          concs=$(gh run list \
+            --workflow concurrency.yml \
+            --event workflow_dispatch \
+            --limit 5 --json conclusion --jq '[.[] | .conclusion] | join(",")')
+          echo "recent conclusions: $concs"
+          case "$concs" in
+            *cancelled*) echo "PASS: at least one slow run was cancelled by concurrency group" >> "$GITHUB_STEP_SUMMARY" ;;
+            *) echo "FAIL: no run was cancelled (got: $concs)"; exit 1 ;;
+          esac
+
+  per_os_group:
+    name: per-os group ${{ matrix.os }}
+    if: inputs.mode == 'drive' || inputs.mode == ''
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    concurrency:
+      group: concurrency-per-os-${{ matrix.os }}-${{ github.run_id }}
+      cancel-in-progress: false
+    steps:
+      - shell: bash
+        run: |
+          echo "PASS: per-OS group accepted on ${{ matrix.os }}" >> "$GITHUB_STEP_SUMMARY"

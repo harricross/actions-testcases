@@ -1,0 +1,40 @@
+name: composite-action-test
+
+# Invokes the local composite action under .github/actions/composite-smoke
+# on every OS to prove composite actions are healthy cross-platform.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  invoke:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - id: smoke
+        uses: ./.github/actions/composite-smoke
+        with:
+          message: hi-${{ runner.os }}
+          multiplier: "3"
+      - name: Assert composite output
+        env:
+          ECHOED: ${{ steps.smoke.outputs.echoed }}
+        run: |
+          set -euo pipefail
+          [ -n "$ECHOED" ] || { echo "FAIL: composite produced no output"; exit 1; }
+          echo "$ECHOED" | grep -q "hi-${{ runner.os }}" || { echo "FAIL: unexpected output: $ECHOED"; exit 1; }
+          echo "PASS: composite action ok on ${{ runner.os }} -> $ECHOED" >> "$GITHUB_STEP_SUMMARY"

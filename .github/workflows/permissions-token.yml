@@ -1,0 +1,62 @@
+name: permissions-token
+
+# Exercises GITHUB_TOKEN permissions:
+#   - A read-only job cannot mutate (asserted: 403 expected).
+#   - A write-scoped job creates an issue, comments, labels, and closes.
+#   - Job-level permissions: override workflow-level grants.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+# Workflow default: contents only. Each job overrides.
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  read_only_should_fail_to_write:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: read
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Confirm we cannot create an issue
+        run: |
+          set -euo pipefail
+          out=$(gh issue create --title "should-fail" --body "x" 2>&1 || true)
+          echo "$out"
+          if echo "$out" | grep -qiE 'HTTP 403|Resource not accessible|forbidden'; then
+            echo "PASS: read-only token correctly refused issue creation" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "FAIL: read-only token was allowed to create an issue: $out"
+            exit 1
+          fi
+
+  write_scoped_should_succeed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Create / comment / label / close
+        run: |
+          set -euo pipefail
+          ts="$(date -u +%Y%m%d-%H%M%S)"
+          gh label create suite-permissions --color cccccc --description "perm probe" 2>/dev/null || true
+          num=$(gh issue create \
+            --title "[suite-perm] probe ${ts}" \
+            --body  "auto" \
+            --label suite-permissions | grep -oE '[0-9]+$')
+          gh issue comment "$num" --body "perm probe comment"
+          gh issue close   "$num" --comment "auto-close"
+          echo "PASS: write-scoped token completed full issue lifecycle on #${num}" >> "$GITHUB_STEP_SUMMARY"

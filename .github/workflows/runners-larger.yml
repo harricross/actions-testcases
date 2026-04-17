@@ -1,0 +1,54 @@
+name: runners-larger
+
+# Exercises larger hosted runners. Gated on vars.LARGER_RUNNER_LABEL.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    outputs:
+      enabled: ${{ steps.g.outputs.enabled }}
+    steps:
+      - id: g
+        run: |
+          set -euo pipefail
+          if [ -z "${{ vars.LARGER_RUNNER_LABEL }}" ]; then
+            echo "SKIP: vars.LARGER_RUNNER_LABEL is not set" >> "$GITHUB_STEP_SUMMARY"
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  larger_probe:
+    needs: gate
+    if: needs.gate.outputs.enabled == 'true'
+    runs-on: ${{ vars.LARGER_RUNNER_LABEL }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          set -euo pipefail
+          cores="$(nproc 2>/dev/null || sysctl -n hw.ncpu)"
+          mem_kb="$(awk '/MemTotal/ {print $2}' /proc/meminfo 2>/dev/null || echo unknown)"
+          echo "cores=${cores} mem_kb=${mem_kb}"
+          # Larger runners advertise >= 4 vCPU.
+          if [ "${cores:-0}" -lt 4 ]; then
+            echo "FAIL: larger runner only reports ${cores} cores"; exit 1
+          fi
+          {
+            echo "## larger runner (\`${{ vars.LARGER_RUNNER_LABEL }}\`)"
+            echo "- cores: ${cores}"
+            echo "- memory KB: ${mem_kb}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "PASS: larger runner has ${cores} cores" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,52 @@
+name: step-summary-annotations
+
+# Exercises rich $GITHUB_STEP_SUMMARY content (tables, code, lists) and
+# file annotations with line numbers. Cross-OS.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  summary:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write rich summary
+        run: |
+          set -euo pipefail
+          {
+            echo "# Suite probe — ${{ runner.os }}"
+            echo ""
+            echo "| Item | Value |"
+            echo "|---|---|"
+            echo "| run | ${GITHUB_RUN_ID} |"
+            echo "| sha | \`${GITHUB_SHA}\` |"
+            echo "| os  | ${{ runner.os }} |"
+            echo ""
+            echo '```bash'
+            echo 'echo "code block in summary"'
+            echo '```'
+            echo ""
+            echo "- bullet a"
+            echo "- bullet b"
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Emit a file annotation
+        run: |
+          set -euo pipefail
+          # Annotations point at this workflow file itself.
+          echo "::notice file=.github/workflows/step-summary-annotations.yml,line=1,col=1::probe annotation from ${{ runner.os }}"
+          echo "PASS: rich summary + file annotation emitted on ${{ runner.os }}" >> "$GITHUB_STEP_SUMMARY"

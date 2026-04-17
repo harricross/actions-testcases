@@ -1,0 +1,62 @@
+name: triggers-workflow-call
+
+# Reusable workflow. Exercised by reusable-caller.yml and by the scheduler
+# via `uses: ./.github/workflows/triggers-workflow-call.yml`.
+#
+# Round-trips every workflow_call feature: inputs of each type, secrets,
+# and a job output that the caller can consume.
+
+on:
+  workflow_call:
+    inputs:
+      label:
+        type: string
+        required: true
+      count:
+        type: number
+        required: false
+        default: 3
+      flag:
+        type: boolean
+        required: false
+        default: true
+    secrets:
+      probe_secret:
+        required: false
+    outputs:
+      summary:
+        description: One-line summary of the call
+        value: ${{ jobs.run.outputs.summary }}
+  workflow_dispatch:
+    inputs:
+      label:
+        type: string
+        default: manual
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      summary: ${{ steps.compose.outputs.summary }}
+    steps:
+      - id: compose
+        env:
+          # Secret is masked automatically; we only assert presence.
+          PROBE_SECRET_PRESENT: ${{ secrets.probe_secret != '' }}
+        run: |
+          set -euo pipefail
+          label="${{ inputs.label }}"
+          count="${{ inputs.count }}"
+          flag="${{ inputs.flag }}"
+          [ -n "$label" ] || { echo "FAIL: label empty"; exit 1; }
+          summary="reusable: label=${label} count=${count} flag=${flag} secret=${PROBE_SECRET_PRESENT:-false}"
+          printf 'summary=%s\n' "$summary" >> "$GITHUB_OUTPUT"
+          echo "PASS: $summary" >> "$GITHUB_STEP_SUMMARY"

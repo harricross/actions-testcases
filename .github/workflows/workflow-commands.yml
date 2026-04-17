@@ -1,0 +1,78 @@
+name: workflow-commands
+
+# Exercises workflow commands and environment-file conventions:
+#   ::notice / ::warning / ::error
+#   ::group / ::endgroup
+#   ::add-mask::
+#   GITHUB_ENV, GITHUB_PATH, GITHUB_OUTPUT
+#
+# Cross-OS so we catch shell-quoting regressions on Windows.
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  commands:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Annotations
+        run: |
+          set -euo pipefail
+          echo "::notice title=suite::notice from ${{ runner.os }}"
+          echo "::warning file=${{ github.workflow }},line=1::a warning"
+          # Don't ::error:: because it would surface as a failure annotation.
+          echo "::group::collapsible group"
+          echo "inside group"
+          echo "::endgroup::"
+      - name: Mask
+        run: |
+          set -euo pipefail
+          probe="mask-probe-$(date -u +%s)"
+          echo "::add-mask::$probe"
+          echo "secret was: $probe (should print ***)"
+      - name: GITHUB_ENV / GITHUB_PATH
+        run: |
+          set -euo pipefail
+          echo "SUITE_VAR=hello-from-env-file" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/bin"
+          printf '#!/usr/bin/env bash\necho probe-on-path-tool\n' > "$RUNNER_TEMP/bin/probe-tool"
+          chmod +x "$RUNNER_TEMP/bin/probe-tool" || true
+          echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+      - name: Read GITHUB_ENV / GITHUB_PATH back
+        env:
+          EXPECTED: hello-from-env-file
+        run: |
+          set -euo pipefail
+          [ "${SUITE_VAR:-}" = "$EXPECTED" ] || { echo "FAIL: SUITE_VAR=$SUITE_VAR"; exit 1; }
+          # Windows runner doesn't reliably mark files +x for unixy probe;
+          # the PATH entry itself being effective is what we assert.
+          case ":$PATH:" in
+            *":$RUNNER_TEMP/bin:"*) ;;
+            *) echo "FAIL: $RUNNER_TEMP/bin not on PATH"; exit 1 ;;
+          esac
+          echo "PASS: GITHUB_ENV and GITHUB_PATH applied" >> "$GITHUB_STEP_SUMMARY"
+      - name: GITHUB_OUTPUT round-trip
+        id: out
+        run: printf 'k=v-%s\n' "${{ runner.os }}" >> "$GITHUB_OUTPUT"
+      - name: Read step output
+        env:
+          K: ${{ steps.out.outputs.k }}
+        run: |
+          set -euo pipefail
+          [ "$K" = "v-${{ runner.os }}" ] || { echo "FAIL: step output mismatch K=$K"; exit 1; }
+          echo "PASS: step output round-trip on ${{ runner.os }}" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,33 @@
+name: triggers-workflow-run
+
+# Chains on completion of reusable-caller.yml. Exists to prove the
+# `workflow_run` trigger fires and exposes the upstream run's metadata.
+
+on:
+  workflow_run:
+    workflows: [reusable-caller]
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  on_workflow_run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Inspect upstream run
+        env:
+          UPSTREAM_ID: ${{ github.event.workflow_run.id }}
+          UPSTREAM_NAME: ${{ github.event.workflow_run.name }}
+          UPSTREAM_CONCL: ${{ github.event.workflow_run.conclusion }}
+        run: |
+          set -euo pipefail
+          [ -n "$UPSTREAM_ID" ] || { echo "FAIL: no upstream run id"; exit 1; }
+          [ "$UPSTREAM_NAME" = "reusable-caller" ] || { echo "FAIL: unexpected upstream name $UPSTREAM_NAME"; exit 1; }
+          echo "PASS: workflow_run fired for upstream id=${UPSTREAM_ID} conclusion=${UPSTREAM_CONCL}" >> "$GITHUB_STEP_SUMMARY"
