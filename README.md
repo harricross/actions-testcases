@@ -1,6 +1,6 @@
 # actions-testcases
 
-[![Actions suite](https://github.com/OWNER/REPO/actions/workflows/_scheduler.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/_scheduler.yml)
+[![Actions suite](https://github.com/harricross/actions-testcases/actions/workflows/_scheduler.yml/badge.svg)](https://github.com/harricross/actions-testcases/actions/workflows/_scheduler.yml)
 
 Hourly, **fork-and-go** smoke suite that exercises every shippable GitHub
 Actions feature. Designed to run unmodified inside a GitHub Enterprise (GHES
