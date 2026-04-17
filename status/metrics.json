@@ -1,0 +1,853 @@
+{
+  "generated_at": "2026-04-17T11:09:34Z",
+  "suites": [
+    {
+      "workflow": "artifacts-attestations.yml",
+      "label": "build provenance attestations",
+      "latest": {
+        "workflow": "artifacts-attestations.yml",
+        "label": "build provenance attestations",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "artifacts-attestations.yml",
+        "label": "build provenance attestations",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "artifacts.yml",
+      "label": "artifacts (v4)",
+      "latest": {
+        "workflow": "artifacts.yml",
+        "label": "artifacts (v4)",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "artifacts.yml",
+        "label": "artifacts (v4)",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "cache.yml",
+      "label": "cache",
+      "latest": {
+        "workflow": "cache.yml",
+        "label": "cache",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "cache.yml",
+        "label": "cache",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "composite-action-test.yml",
+      "label": "composite action",
+      "latest": {
+        "workflow": "composite-action-test.yml",
+        "label": "composite action",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "composite-action-test.yml",
+        "label": "composite action",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "concurrency.yml",
+      "label": "concurrency",
+      "latest": {
+        "workflow": "concurrency.yml",
+        "label": "concurrency",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "concurrency.yml",
+        "label": "concurrency",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "dependency-graph.yml",
+      "label": "dependency submission",
+      "latest": {
+        "workflow": "dependency-graph.yml",
+        "label": "dependency submission",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "dependency-graph.yml",
+        "label": "dependency submission",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "docker-action-test.yml",
+      "label": "docker action",
+      "latest": {
+        "workflow": "docker-action-test.yml",
+        "label": "docker action",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "docker-action-test.yml",
+        "label": "docker action",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "environments-approval.yml",
+      "label": "environments / approvals",
+      "latest": {
+        "workflow": "environments-approval.yml",
+        "label": "environments / approvals",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "environments-approval.yml",
+        "label": "environments / approvals",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "expressions-contexts.yml",
+      "label": "expressions / contexts",
+      "latest": {
+        "workflow": "expressions-contexts.yml",
+        "label": "expressions / contexts",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "expressions-contexts.yml",
+        "label": "expressions / contexts",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "javascript-action-test.yml",
+      "label": "javascript action",
+      "latest": {
+        "workflow": "javascript-action-test.yml",
+        "label": "javascript action",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "javascript-action-test.yml",
+        "label": "javascript action",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "job-orchestration.yml",
+      "label": "job orchestration",
+      "latest": {
+        "workflow": "job-orchestration.yml",
+        "label": "job orchestration",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "job-orchestration.yml",
+        "label": "job orchestration",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "matrix-strategies.yml",
+      "label": "matrix strategies",
+      "latest": {
+        "workflow": "matrix-strategies.yml",
+        "label": "matrix strategies",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "matrix-strategies.yml",
+        "label": "matrix strategies",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "oidc-cloud.yml",
+      "label": "OIDC token issuance",
+      "latest": {
+        "workflow": "oidc-cloud.yml",
+        "label": "OIDC token issuance",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "oidc-cloud.yml",
+        "label": "OIDC token issuance",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "pages-deploy.yml",
+      "label": "pages deploy",
+      "latest": {
+        "workflow": "pages-deploy.yml",
+        "label": "pages deploy",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "pages-deploy.yml",
+        "label": "pages deploy",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "permissions-token.yml",
+      "label": "permissions / GITHUB_TOKEN",
+      "latest": {
+        "workflow": "permissions-token.yml",
+        "label": "permissions / GITHUB_TOKEN",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "permissions-token.yml",
+        "label": "permissions / GITHUB_TOKEN",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "reusable-caller.yml",
+      "label": "reusable workflow caller",
+      "latest": {
+        "workflow": "reusable-caller.yml",
+        "label": "reusable workflow caller",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "reusable-caller.yml",
+        "label": "reusable workflow caller",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "runners-arc.yml",
+      "label": "runners — Actions Runner Controller",
+      "latest": {
+        "workflow": "runners-arc.yml",
+        "label": "runners — Actions Runner Controller",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "runners-arc.yml",
+        "label": "runners — Actions Runner Controller",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "runners-container.yml",
+      "label": "runners — container + services",
+      "latest": {
+        "workflow": "runners-container.yml",
+        "label": "runners — container + services",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "runners-container.yml",
+        "label": "runners — container + services",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "runners-larger.yml",
+      "label": "runners — larger hosted",
+      "latest": {
+        "workflow": "runners-larger.yml",
+        "label": "runners — larger hosted",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "runners-larger.yml",
+        "label": "runners — larger hosted",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "runners-os-matrix.yml",
+      "label": "runners — ubuntu/win/mac",
+      "latest": {
+        "workflow": "runners-os-matrix.yml",
+        "label": "runners — ubuntu/win/mac",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "runners-os-matrix.yml",
+        "label": "runners — ubuntu/win/mac",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "runners-self-hosted.yml",
+      "label": "runners — self-hosted",
+      "latest": {
+        "workflow": "runners-self-hosted.yml",
+        "label": "runners — self-hosted",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "runners-self-hosted.yml",
+        "label": "runners — self-hosted",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "secrets-and-vars.yml",
+      "label": "secrets / vars / masking",
+      "latest": {
+        "workflow": "secrets-and-vars.yml",
+        "label": "secrets / vars / masking",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "secrets-and-vars.yml",
+        "label": "secrets / vars / masking",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "step-summary-annotations.yml",
+      "label": "step summary / annotations",
+      "latest": {
+        "workflow": "step-summary-annotations.yml",
+        "label": "step summary / annotations",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "step-summary-annotations.yml",
+        "label": "step summary / annotations",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "triggers-events.yml",
+      "label": "triggers — issues / events",
+      "latest": {
+        "workflow": "triggers-events.yml",
+        "label": "triggers — issues / events",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "triggers-events.yml",
+        "label": "triggers — issues / events",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "triggers-manual.yml",
+      "label": "triggers — workflow_dispatch",
+      "latest": {
+        "workflow": "triggers-manual.yml",
+        "label": "triggers — workflow_dispatch",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "triggers-manual.yml",
+        "label": "triggers — workflow_dispatch",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "triggers-push.yml",
+      "label": "triggers — push / PR",
+      "latest": {
+        "workflow": "triggers-push.yml",
+        "label": "triggers — push / PR",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "triggers-push.yml",
+        "label": "triggers — push / PR",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "triggers-workflow-call.yml",
+      "label": "triggers — workflow_call",
+      "latest": {
+        "workflow": "triggers-workflow-call.yml",
+        "label": "triggers — workflow_call",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "triggers-workflow-call.yml",
+        "label": "triggers — workflow_call",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "triggers-workflow-run.yml",
+      "label": "triggers — workflow_run",
+      "latest": {
+        "workflow": "triggers-workflow-run.yml",
+        "label": "triggers — workflow_run",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "triggers-workflow-run.yml",
+        "label": "triggers — workflow_run",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    },
+    {
+      "workflow": "workflow-commands.yml",
+      "label": "workflow commands",
+      "latest": {
+        "workflow": "workflow-commands.yml",
+        "label": "workflow commands",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T11:09:34Z"
+      },
+      "prev": {
+        "workflow": "workflow-commands.yml",
+        "label": "workflow commands",
+        "conclusion": "missing",
+        "url": "",
+        "ts": "2026-04-17T10:51:54Z"
+      },
+      "flipped": false,
+      "total_seen": 0,
+      "success": 0,
+      "failure": 0,
+      "uptime_24h": null,
+      "uptime_7d": null,
+      "uptime_30d": null,
+      "streak_count": 0,
+      "streak_state": "missing",
+      "flakes_7d": 0,
+      "mttr_7d_seconds": null
+    }
+  ],
+  "highlights": {
+    "new_failures": [],
+    "recoveries": [],
+    "long_red": [],
+    "flakiest": [],
+    "low_uptime": []
+  }
+}
