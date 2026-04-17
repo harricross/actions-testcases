@@ -13,6 +13,7 @@
 
 def parse_ts(s): s | sub("\\.[0-9]+Z$"; "Z") | fromdateiso8601;
 def now_epoch: $now | parse_ts(.);
+def day_str(e): (e | todate)[0:10];
 
 # Uptime as percentage rounded to one decimal place. Null when no data.
 def uptime(arr):
@@ -45,6 +46,16 @@ def flakes(arr):
     | ($hd | map(select((.ts | parse_ts(.)) >= $t24)))  as $w24
     | ($hd | map(select((.ts | parse_ts(.)) >= $t7d)))  as $w7d
     | ($hd | map(select((.ts | parse_ts(.)) >= $t30d))) as $w30d
+    # Per-day uptime series for the last 30 UTC days, oldest first.
+    # Days with zero runs emit uptime=null, runs=0 — never fabricate values.
+    | ((now_epoch / 86400 | floor) * 86400) as $today_start
+    | ([range(0; 30)] | map($today_start - (29 - .) * 86400)) as $day_starts
+    | ($hd | map(. + {day: day_str(.ts | parse_ts(.))})) as $hd_with_day
+    | ($day_starts | map(
+        day_str(.) as $d
+        | ($hd_with_day | map(select(.day == $d))) as $r
+        | { day: $d, runs: ($r | length), uptime: uptime($r) }
+      )) as $trend30
     # Current streak: trailing run of identical conclusions.
     | (reduce ($hd | reverse[]) as $e ({c: $latest.conclusion, n: 0, done: false};
         if .done then . elif $e.conclusion == .c then .n += 1 else .done = true end))
@@ -73,7 +84,8 @@ def flakes(arr):
         streak_count: $streak.n,
         streak_state: $latest.conclusion,
         flakes_7d: flakes($w7d),
-        mttr_7d_seconds: (if $mttr.count > 0 then ($mttr.acc / $mttr.count | floor) else null end)
+        mttr_7d_seconds: (if $mttr.count > 0 then ($mttr.acc / $mttr.count | floor) else null end),
+        trend_30d: $trend30
       }
   )) as $suites
 | {

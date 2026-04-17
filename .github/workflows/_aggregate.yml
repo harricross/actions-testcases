@@ -378,6 +378,7 @@ jobs:
               <th data-sort="streak">Streak</th>
               <th data-sort="uptime_24h">Uptime 24h</th>
               <th data-sort="uptime_7d">Uptime 7d</th>
+              <th>Trend 30d</th>
               <th data-sort="flakes_7d">Flakes 7d</th>
               <th data-sort="mttr_7d_seconds">MTTR 7d</th>
             </tr></thead>
@@ -402,6 +403,42 @@ jobs:
             c === 'failure' ? '<span class="bad">✗ failure</span>' :
             c === 'cancelled' ? '<span class="warn">○ cancelled</span>' :
             '<span class="mute">– none</span>';
+          // 30-day uptime sparkline: pure inline SVG, no external libs.
+          // Null days break the polyline (gap). Colour reflects the mean of
+          // non-null entries: green ≥99, red <50, amber otherwise.
+          const sparkline = (trend) => {
+            if (!Array.isArray(trend) || trend.length === 0) return '<span class="mute">n/a</span>';
+            const W = 120, H = 24, P = 2, n = trend.length;
+            const valid = trend.map(d => d && d.uptime).filter(v => v != null);
+            const mean = valid.length ? valid.reduce((a,b)=>a+b,0) / valid.length : null;
+            const colour = mean == null ? 'var(--mute)'
+              : mean >= 99 ? 'var(--ok)'
+              : mean < 50 ? 'var(--bad)'
+              : 'var(--warn)';
+            const xAt = i => P + (i * (W - 2*P)) / (n - 1);
+            const yAt = u => H - P - (u/100) * (H - 2*P);
+            const segments = [];
+            let cur = [];
+            trend.forEach((d, i) => {
+              if (!d || d.uptime == null) {
+                if (cur.length) { segments.push(cur); cur = []; }
+              } else {
+                cur.push(\`\${xAt(i).toFixed(1)},\${yAt(d.uptime).toFixed(1)}\`);
+              }
+            });
+            if (cur.length) segments.push(cur);
+            const lines = segments.map(s =>
+              \`<polyline fill="none" stroke="\${colour}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round" points="\${s.join(' ')}"/>\`
+            ).join('');
+            const dots = trend.map((d, i) =>
+              (d && d.uptime != null)
+                ? \`<circle cx="\${xAt(i).toFixed(1)}" cy="\${yAt(d.uptime).toFixed(1)}" r="0.9" fill="\${colour}"/>\`
+                : ''
+            ).join('');
+            const last = trend[trend.length - 1];
+            const lastTxt = last && last.uptime != null ? \`\${last.uptime}% on \${last.day}\` : 'no data';
+            return \`<svg width="\${W}" height="\${H}" viewBox="0 0 \${W} \${H}" role="img" aria-label="\${trend.length}-day uptime trend, latest \${lastTxt}"><title>\${trend.length}-day uptime, latest: \${lastTxt}</title>\${lines}\${dots}</svg>\`;
+          };
           document.getElementById('ts').textContent = DATA.generated_at;
 
           const hl = document.getElementById('highlights');
@@ -434,6 +471,7 @@ jobs:
                 <td>\${s.streak_count} <span class="mute">\${s.streak_state}</span></td>
                 <td>\${fmtPct(s.uptime_24h)}</td>
                 <td>\${fmtPct(s.uptime_7d)}</td>
+                <td>\${sparkline(s.trend_30d)}</td>
                 <td>\${s.flakes_7d}</td>
                 <td>\${fmtDur(s.mttr_7d_seconds)}</td>
               </tr>\`).join('');

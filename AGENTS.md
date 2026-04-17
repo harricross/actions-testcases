@@ -118,11 +118,16 @@ results per workflow; a fat workflow loses the "what broke" signal.
      **No LLM, no external network, no third-party action.**
   4. **Renders a self-contained `dashboard.html`** with the metrics
      inlined as JSON. Vanilla CSS (light + dark via
-     `prefers-color-scheme`), small inline JS for table sort. No
-     `fetch()`, no CDN — the page must work offline if saved.
-     Deployed every hour to GitHub Pages by a separate
-     `deploy_dashboard` job (split because `actions/deploy-pages@v4`
-     requires its own `environment:` block).
+     `prefers-color-scheme`), small inline JS for table sort and a
+     per-suite **30-day uptime sparkline** (pure inline SVG —
+     `<polyline>`, no chart library, no CDN). Sparkline data comes
+     from `metrics.jq`'s `trend_30d` field (30 entries oldest-first;
+     days with zero runs emit `uptime: null`, rendered as gaps in the
+     line). Colour reflects the mean of non-null entries: green ≥99,
+     red <50, amber otherwise. No `fetch()`, no CDN — the page must
+     work offline if saved. Deployed every hour to GitHub Pages by a
+     separate `deploy_dashboard` job (split because
+     `actions/deploy-pages@v4` requires its own `environment:` block).
   5. Opens a `suite-failure`-labelled issue per failing suite (deduped
      by title), comments on repeats, and auto-closes issues whose
      suite has recovered.
@@ -202,8 +207,12 @@ or `tests/**`. They assert:
   `metrics.jq` against `tests/fixtures/snapshots/*.json` (5 hourly
   fixtures designed to exercise every code path: stable green, stable
   red ≥3h, flapper, new-failure, and recovery) and asserts 39
-  specific values in the output. Catches any regression in uptime,
-  streak, flake, MTTR, or highlights logic.
+  specific values in the output. It also generates a synthetic
+  30-day fixture set under `tests/.trend-tmp/` (gitignored) on the
+  fly to assert the `trend_30d` series shape (cardinality, oldest-
+  first ordering, schema fields, null handling for zero-run days,
+  uptime calc for a known day). Catches any regression in uptime,
+  streak, flake, MTTR, trend, or highlights logic.
 
 `metrics.jq` and `highlights.jq` live in `.github/scripts/` so the
 aggregator and the test share one source of truth — there is no
@@ -232,6 +241,34 @@ to manage `suite-failure` issues: open → read → comment → list comments
   the runner image. The cleanup `trap` closes the probe issue even on
   failure, so a red run should not leave open `selftest-lifecycle`
   issues — if it does, that itself is a finding worth investigating.
+
+### Negative tests
+
+`tests/run-negative-tests.sh` is the meta-meta-guard: it proves the
+contract checker and the metrics regression test would actually catch
+real breakage. Without it, a green self-test run could be a false
+positive (e.g. the checker silently became a no-op).
+
+For each mutation, the harness:
+
+1. Copies the repo into a fresh `mktemp -d` workdir (tracked sources
+   are never modified in place).
+2. Applies one specific breakage in the copy — e.g. flips a
+   conclusion in `tests/fixtures/snapshots/05.json`, removes
+   `actions/cache@` from `cache.yml`, drops `timeout-minutes:`,
+   injects a third-party `uses:`, adds an orphan workflow, or
+   reverses the flakiest sort in `metrics.jq`.
+3. Runs the relevant checker (`.github/scripts/check-contracts.sh`
+   or `tests/run-metrics-tests.sh`) against the copy.
+4. Asserts the checker exited **non-zero**. A zero exit means the
+   checker missed the breakage and is itself broken — fail loudly
+   so the regression in the regression-detector gets fixed.
+5. Cleans up the workdir via `trap`.
+
+To add a new mutation: append a `mutation_<name>` function in
+`tests/run-negative-tests.sh` following the existing pattern, call
+it from `main`, and ensure it touches a single, well-defined
+property. One mutation per assertion keeps failures readable.
 
 ## How to debug a failing suite
 
