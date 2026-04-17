@@ -110,6 +110,7 @@ jobs:
           # ---------------------------------------------------------------
           exempt=(
             _scheduler.yml _aggregate.yml _self-test.yml
+            _issue-lifecycle-test.yml
             reusable-caller.yml triggers-workflow-call.yml
             triggers-push.yml triggers-workflow-run.yml triggers-manual.yml
             triggers-events.yml
