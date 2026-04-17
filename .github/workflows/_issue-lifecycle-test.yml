@@ -10,8 +10,15 @@ name: _issue-lifecycle-test
 #
 # This workflow exercises the whole open → comment → close → verify path
 # weekly and on demand, using a dedicated `selftest-lifecycle` label so it
-# never collides with the real `suite-failure` issue stream. A trap closes
-# the test issue even on mid-run failure.
+# never collides with the real `suite-failure` issue stream.
+#
+# On full success the test issue is **hard-deleted** via the GraphQL
+# `deleteIssue` mutation (REST `gh issue delete` does not exist; REST only
+# supports close). On any phase failure the issue is **left open** with a
+# debug comment so a human can investigate without us truncating the audit
+# trail. Either way, a structured JSON ledger of every run is appended to
+# `probes/issue-lifecycle.json` on the `status` orphan branch (rolling tail
+# of the last 100 runs, oldest first).
 #
 # Intentionally NOT wired into _scheduler.yml: it's its own probe, runs on
 # its own schedule, and must stay out of the hourly rollup so a permission
@@ -26,7 +33,8 @@ on:
 
 permissions:
   issues: write
-  contents: read
+  # contents: write is needed to push the ledger entry to the `status` branch.
+  contents: write
 
 defaults:
   run:
@@ -43,44 +51,77 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       LABEL: selftest-lifecycle
+      STATUS_BRANCH: status
+    outputs:
+      conclusion: ${{ steps.lifecycle.outputs.conclusion }}
+      issue_number: ${{ steps.lifecycle.outputs.issue_number }}
+      issue_deleted: ${{ steps.lifecycle.outputs.issue_deleted }}
+      started_at: ${{ steps.lifecycle.outputs.started_at }}
+      ended_at: ${{ steps.lifecycle.outputs.ended_at }}
+      duration_seconds: ${{ steps.lifecycle.outputs.duration_seconds }}
+      phases_json: ${{ steps.lifecycle.outputs.phases_json }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Exercise gh issue lifecycle
+        id: lifecycle
         run: |
           set -euo pipefail
 
           pass=0
           fail=0
           NUM=""
+          NODE_ID=""
+          # Phase records as compact JSON objects, fed into a jq array later.
+          PHASES_FILE="$RUNNER_TEMP/phases.ndjson"
+          : > "$PHASES_FILE"
 
-          # Cleanup trap: close the test issue if it was created, even on
-          # mid-test failure. `|| true` so cleanup never masks the real exit.
-          trap '[ -n "$NUM" ] && gh issue close "$NUM" --reason "not planned" 2>/dev/null || true' EXIT
+          STARTED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          STARTED_EPOCH="$(date -u +%s)"
+
+          # Cleanup trap: on mid-test failure, leave the issue OPEN with a
+          # debug comment pointing at this run so a human can investigate.
+          # We deliberately do NOT close or delete on failure — preserving
+          # the audit trail is the whole point of the probe. `|| true` so
+          # cleanup never masks the real exit.
+          cleanup() {
+            rc=$?
+            if [ "$rc" -ne 0 ] && [ -n "$NUM" ]; then
+              gh issue comment "$NUM" --body \
+                "❌ Lifecycle probe failed mid-run. Leaving this issue open for inspection. Run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}" \
+                >/dev/null 2>&1 || true
+            fi
+            return $rc
+          }
+          trap cleanup EXIT
 
           phase() {
             # phase <name> <pass|fail> [msg]
-            if [ "$2" = "pass" ]; then
+            local name="$1" status="$2" msg="${3:-}"
+            if [ "$status" = "pass" ]; then
               pass=$((pass+1))
-              echo "PASS: $1"
-              echo "✅ $1" >> "$GITHUB_STEP_SUMMARY"
+              echo "PASS: $name"
+              echo "✅ $name" >> "$GITHUB_STEP_SUMMARY"
             else
               fail=$((fail+1))
-              echo "FAIL: $1 — ${3:-}"
-              echo "❌ $1 — ${3:-}" >> "$GITHUB_STEP_SUMMARY"
+              echo "FAIL: $name — $msg"
+              echo "❌ $name — $msg" >> "$GITHUB_STEP_SUMMARY"
             fi
+            jq -cn --arg n "$name" --arg s "$status" '{name:$n,status:$s}' >> "$PHASES_FILE"
           }
 
           echo "## Issue lifecycle smoke test" >> "$GITHUB_STEP_SUMMARY"
 
           # ---------------------------------------------------------------
-          # (a) Ensure label, then create the test issue.
+          # (a) Ensure label, then create the test issue. Capture both the
+          #     issue number AND the GraphQL node_id (REST has no `gh issue
+          #     delete`; only the GraphQL `deleteIssue(input:{issueId})`
+          #     mutation can hard-delete, and it requires the node_id).
           # ---------------------------------------------------------------
           gh label create "$LABEL" --force \
             --color ededed \
             --description "Auto-managed probe issues from _issue-lifecycle-test" \
             >/dev/null
-          phase "label ensured ($LABEL)" pass
 
           STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
           TITLE="[selftest-lifecycle] $STAMP"
@@ -88,14 +129,23 @@ jobs:
           # support); the issue number is the trailing path component.
           URL=$(gh issue create \
             --title "$TITLE" \
-            --body "Automated lifecycle probe from run ${GITHUB_RUN_ID}. Safe to ignore; will be auto-closed." \
+            --body "Automated lifecycle probe from run ${GITHUB_RUN_ID}. Safe to ignore; will be auto-deleted on success or left open on failure." \
             --label "$LABEL")
           NUM="${URL##*/}"
           if [ -z "$NUM" ] || ! [[ "$NUM" =~ ^[0-9]+$ ]]; then
-            phase "create issue" fail "could not parse issue number from '$URL'"
+            phase "create" fail "could not parse issue number from '$URL'"
             exit 1
           fi
-          phase "create issue (#$NUM)" pass
+          # Preserve the issue number for the ledger; NUM may be cleared
+          # later (after hard-delete) to disarm the failure trap.
+          ISSUE_NUM_FOR_LEDGER="$NUM"
+          # Fetch the GraphQL node_id; required by deleteIssue.
+          NODE_ID=$(gh api "repos/${GITHUB_REPOSITORY}/issues/${NUM}" --jq '.node_id')
+          if [ -z "$NODE_ID" ] || [ "$NODE_ID" = "null" ]; then
+            phase "create" fail "missing node_id for #$NUM"
+            exit 1
+          fi
+          phase "create" pass
 
           # ---------------------------------------------------------------
           # (b) Read back via gh api — assert state=open + label present.
@@ -104,9 +154,9 @@ jobs:
           state=$(jq -r '.state' <<<"$ISSUE_JSON")
           has_label=$(jq -r --arg L "$LABEL" '[.labels[].name] | index($L) != null' <<<"$ISSUE_JSON")
           if [ "$state" = "open" ] && [ "$has_label" = "true" ]; then
-            phase "post-create read: state=open, label present" pass
+            phase "read_open" pass
           else
-            phase "post-create read" fail "state=$state has_label=$has_label"
+            phase "read_open" fail "state=$state has_label=$has_label"
           fi
 
           # ---------------------------------------------------------------
@@ -114,7 +164,7 @@ jobs:
           # ---------------------------------------------------------------
           COMMENT_BODY="lifecycle-probe-comment ${STAMP}"
           gh issue comment "$NUM" --body "$COMMENT_BODY" >/dev/null
-          phase "post comment" pass
+          phase "comment" pass
 
           # ---------------------------------------------------------------
           # (d) List comments via gh api — assert exactly 1, body matches.
@@ -123,16 +173,16 @@ jobs:
           count=$(jq 'length' <<<"$COMMENTS_JSON")
           first_body=$(jq -r '.[0].body // ""' <<<"$COMMENTS_JSON")
           if [ "$count" = "1" ] && [ "$first_body" = "$COMMENT_BODY" ]; then
-            phase "list comments: 1 comment, body matches" pass
+            phase "list_comments" pass
           else
-            phase "list comments" fail "count=$count body='$first_body'"
+            phase "list_comments" fail "count=$count body='$first_body'"
           fi
 
           # ---------------------------------------------------------------
           # (e) Close via gh issue close --reason completed.
           # ---------------------------------------------------------------
           gh issue close "$NUM" --reason completed >/dev/null
-          phase "close issue --reason completed" pass
+          phase "close" pass
 
           # ---------------------------------------------------------------
           # (f) Read again — assert state=closed, state_reason=completed.
@@ -141,17 +191,18 @@ jobs:
           state=$(jq -r '.state' <<<"$ISSUE_JSON")
           reason=$(jq -r '.state_reason // ""' <<<"$ISSUE_JSON")
           if [ "$state" = "closed" ] && [ "$reason" = "completed" ]; then
-            phase "post-close read: state=closed, state_reason=completed" pass
-            # Issue is already closed cleanly; clear NUM so the trap doesn't
-            # try to re-close it as "not planned" and overwrite state_reason.
-            NUM=""
+            phase "read_closed" pass
           else
-            phase "post-close read" fail "state=$state state_reason=$reason"
+            phase "read_closed" fail "state=$state state_reason=$reason"
           fi
 
           # ---------------------------------------------------------------
           # Tally.
           # ---------------------------------------------------------------
+          ENDED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          ENDED_EPOCH="$(date -u +%s)"
+          DURATION=$((ENDED_EPOCH - STARTED_EPOCH))
+
           echo ""
           echo "── Summary ────────────────────────────────────"
           echo "passed: $pass"
@@ -160,4 +211,159 @@ jobs:
             echo ""
             echo "**$pass passed, $fail failed**"
           } >> "$GITHUB_STEP_SUMMARY"
+
+          # ---------------------------------------------------------------
+          # (g) On full success only: hard-delete the issue via the GraphQL
+          #     `deleteIssue` mutation. REST has no delete endpoint — this
+          #     mutation is the only path. On failure we leave NUM set and
+          #     skip deletion so the trap's debug comment lands and the
+          #     issue stays open for inspection.
+          # ---------------------------------------------------------------
+          ISSUE_DELETED="false"
+          if [ "$fail" -eq 0 ]; then
+            # shellcheck disable=SC2016 # $id is a GraphQL variable, not shell.
+            gh api graphql \
+              -f query='mutation($id:ID!){deleteIssue(input:{issueId:$id}){clientMutationId}}' \
+              -F id="$NODE_ID" \
+              >/dev/null
+            ISSUE_DELETED="true"
+            echo "PASS: hard-deleted issue #$NUM via GraphQL deleteIssue"
+            echo "🧹 hard-deleted #$NUM" >> "$GITHUB_STEP_SUMMARY"
+            # Clear NUM so the failure-trap doesn't try to comment on a
+            # deleted issue if a later step in this script ever errors.
+            NUM=""
+          fi
+
+          # ---------------------------------------------------------------
+          # Emit step outputs for the ledger job.
+          # ---------------------------------------------------------------
+          CONCLUSION="success"
+          [ "$fail" -eq 0 ] || CONCLUSION="failure"
+          PHASES_JSON=$(jq -cs '.' "$PHASES_FILE")
+          {
+            echo "conclusion=$CONCLUSION"
+            echo "issue_number=${ISSUE_NUM_FOR_LEDGER:-}"
+            echo "issue_deleted=$ISSUE_DELETED"
+            echo "started_at=$STARTED_AT"
+            echo "ended_at=$ENDED_AT"
+            echo "duration_seconds=$DURATION"
+            echo "phases_json=$PHASES_JSON"
+          } >> "$GITHUB_OUTPUT"
+
           [ "$fail" -eq 0 ]
+
+      # ------------------------------------------------------------------
+      # Append a structured run record to the JSON ledger on the `status`
+      # orphan branch. Runs even on failure so we have an audit trail of
+      # both successful and failed probes. Mirrors the fetch / commit /
+      # push pattern used by `_aggregate.yml` for the same branch; uses
+      # a small fetch+rebase retry loop to survive races with the hourly
+      # aggregator (which writes elsewhere on the branch but shares the
+      # same ref).
+      # ------------------------------------------------------------------
+      - name: Append ledger entry to status branch
+        if: always() && steps.lifecycle.outcome != 'skipped'
+        env:
+          STATUS_BRANCH: status
+          CONCLUSION: ${{ steps.lifecycle.outputs.conclusion || 'failure' }}
+          ISSUE_NUMBER: ${{ steps.lifecycle.outputs.issue_number }}
+          ISSUE_DELETED: ${{ steps.lifecycle.outputs.issue_deleted || 'false' }}
+          STARTED_AT: ${{ steps.lifecycle.outputs.started_at }}
+          ENDED_AT: ${{ steps.lifecycle.outputs.ended_at }}
+          DURATION: ${{ steps.lifecycle.outputs.duration_seconds }}
+          PHASES_JSON: ${{ steps.lifecycle.outputs.phases_json || '[]' }}
+        run: |
+          set -euo pipefail
+
+          # Tolerate partial outputs from a hard-failed lifecycle step.
+          : "${STARTED_AT:=$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+          : "${ENDED_AT:=$(date -u +%Y-%m-%dT%H:%M:%SZ)}"
+          : "${DURATION:=0}"
+
+          RUN_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+
+          ENTRY=$(jq -cn \
+            --arg run_id   "$GITHUB_RUN_ID" \
+            --arg run_url  "$RUN_URL" \
+            --arg started  "$STARTED_AT" \
+            --arg ended    "$ENDED_AT" \
+            --argjson dur  "${DURATION:-0}" \
+            --arg conc     "$CONCLUSION" \
+            --arg issue    "${ISSUE_NUMBER:-}" \
+            --argjson del  "$( [ "$ISSUE_DELETED" = "true" ] && echo true || echo false )" \
+            --argjson phs  "$PHASES_JSON" \
+            '{
+              run_id: $run_id,
+              run_url: $run_url,
+              started_at: $started,
+              ended_at: $ended,
+              duration_seconds: $dur,
+              conclusion: $conc,
+              issue_number: ( $issue | if . == "" then null else tonumber? // . end ),
+              issue_deleted: $del,
+              phases: $phs
+            }')
+
+          git config --global user.name  "actions-testcases[bot]"
+          git config --global user.email "actions-testcases@users.noreply.github.com"
+
+          mkdir status-branch
+          cd status-branch
+          git init -q -b "$STATUS_BRANCH"
+          git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+          auth_header="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$GH_TOKEN" | base64 | tr -d '\n')"
+          git config "http.${GITHUB_SERVER_URL}/.extraheader" "$auth_header"
+
+          # Retry loop: fetch latest, append, push. If push races with
+          # _aggregate.yml's hourly write, fetch again and replay. Bounded
+          # at 5 attempts to avoid pathological loops.
+          attempt=0
+          while : ; do
+            attempt=$((attempt+1))
+            if git fetch --depth 1 origin "$STATUS_BRANCH" 2>/dev/null; then
+              git checkout -q -B "$STATUS_BRANCH" FETCH_HEAD
+            else
+              # First-ever write to the branch; init from scratch.
+              echo "# status branch (initialized by _issue-lifecycle-test)" > README.md
+              git add README.md
+              git commit -q -m "init status branch (probe ledger)"
+            fi
+
+            mkdir -p probes
+            existing='{"schema_version":1,"probe":"issue-lifecycle","runs":[]}'
+            if [ -f probes/issue-lifecycle.json ]; then
+              existing=$(cat probes/issue-lifecycle.json)
+            fi
+            # Append the new entry, then keep only the last 100 (oldest first).
+            jq --argjson e "$ENTRY" \
+              '.runs = ((.runs // []) + [$e] | .[-100:])
+               | .schema_version = 1
+               | .probe = "issue-lifecycle"' \
+              <<<"$existing" > probes/issue-lifecycle.json
+
+            git add probes/issue-lifecycle.json
+            if git diff --cached --quiet; then
+              echo "No ledger changes to commit (unexpected; not pushing)."
+              break
+            fi
+            git commit -q -m "probe(issue-lifecycle): ${CONCLUSION} run ${GITHUB_RUN_ID}"
+
+            if git push -q origin "$STATUS_BRANCH"; then
+              echo "Pushed ledger entry on attempt ${attempt}."
+              break
+            fi
+            if [ "$attempt" -ge 5 ]; then
+              echo "FAIL: could not push ledger after ${attempt} attempts (status branch race)."
+              exit 1
+            fi
+            echo "Push raced; resetting and retrying (attempt ${attempt})."
+            # Reset working tree so the next iteration's checkout is clean.
+            cd ..
+            rm -rf status-branch
+            mkdir status-branch
+            cd status-branch
+            git init -q -b "$STATUS_BRANCH"
+            git remote add origin "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}.git"
+            git config "http.${GITHUB_SERVER_URL}/.extraheader" "$auth_header"
+            sleep 2
+          done

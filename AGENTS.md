@@ -235,12 +235,55 @@ to manage `suite-failure` issues: open → read → comment → list comments
   the hourly rollup would let a token regression here mask every other
   suite's status. It is therefore listed in the Test 3 exempt set in
   `_self-test.yml` (carried in `.github/scripts/check-contracts.sh`).
+- **Cleanup — hard-delete on success, leave-open on failure.** On a
+  fully green run the test issue is **hard-deleted** via the GraphQL
+  `deleteIssue(input:{issueId})` mutation. There is no REST endpoint
+  for issue deletion (`gh issue delete` does not exist; REST only
+  closes), so GraphQL is the only path — and it requires the issue's
+  `node_id`, captured at create time. The probe must therefore have
+  `issues: write` *and* a token with delete permissions (the default
+  `GITHUB_TOKEN` does, for issues it just created in the same repo).
+  On any phase failure the issue is **left OPEN** with a debug comment
+  pointing at the failing run, so a human can inspect the residue
+  rather than us truncating the audit trail. After a successful run,
+  `gh issue list --label selftest-lifecycle --state all` should show
+  zero entries from that run; a leftover closed issue means the delete
+  step failed and is itself worth investigating.
+- **Run ledger on the `status` branch.** Every run (pass or fail)
+  appends a structured record to `probes/issue-lifecycle.json` on the
+  `status` orphan branch (rolling tail of the last 100 runs, oldest
+  first). Schema:
+  ```json
+  {
+    "schema_version": 1,
+    "probe": "issue-lifecycle",
+    "runs": [
+      { "run_id": "...", "run_url": "...",
+        "started_at": "...", "ended_at": "...", "duration_seconds": 8,
+        "conclusion": "success", "issue_number": 17,
+        "issue_deleted": true,
+        "phases": [
+          {"name":"create","status":"pass"},
+          {"name":"read_open","status":"pass"},
+          {"name":"comment","status":"pass"},
+          {"name":"list_comments","status":"pass"},
+          {"name":"close","status":"pass"},
+          {"name":"read_closed","status":"pass"}
+        ] }
+    ]
+  }
+  ```
+  This gives us long-term audit even after the issue itself is gone.
+  The push uses the same `git init` + `fetch --depth 1` + force-push
+  dance as `_aggregate.yml`, with a small fetch+rebase retry loop to
+  survive races against the hourly aggregator (which writes other
+  paths on the same branch). Needs `contents: write`.
 - **Reading a red weekly run:** check the failing `PASS/FAIL` line in
   the job summary. Most likely cause is a permissions regression
-  (token can no longer write issues) or a `gh` CLI behaviour change on
-  the runner image. The cleanup `trap` closes the probe issue even on
-  failure, so a red run should not leave open `selftest-lifecycle`
-  issues — if it does, that itself is a finding worth investigating.
+  (token can no longer write/delete issues) or a `gh` CLI behaviour
+  change on the runner image. The leftover OPEN issue itself is the
+  next breadcrumb — its body and any debug comment from the trap link
+  back to the failing run.
 
 ### Negative tests
 
