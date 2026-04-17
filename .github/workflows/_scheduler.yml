@@ -76,7 +76,10 @@ jobs:
     timeout-minutes: 5
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
     steps:
+      # We don't need a working tree, but gh CLI infers the repo from .git.
+      # Setting GH_REPO above avoids needing a checkout.
       - name: Dispatch triggers-manual (workflow_dispatch only)
         run: |
           set -euo pipefail

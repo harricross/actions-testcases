@@ -47,6 +47,11 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
+      # gh CLI infers the repo from .git; without a working tree it errors.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       # ------------------------------------------------------------------
       # 1. Snapshot every test workflow's latest conclusion as JSON.
       # ------------------------------------------------------------------

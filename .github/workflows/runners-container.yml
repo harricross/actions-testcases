@@ -44,9 +44,12 @@ jobs:
           --health-retries 10
     steps:
       - name: Install probe tools
+        # alpine has no bash; install it first using sh, then later steps
+        # can use the workflow-default bash shell.
+        shell: sh
         run: |
           set -eu
-          apk add --no-cache postgresql-client redis curl bash >/dev/null
+          apk add --no-cache bash postgresql-client redis curl >/dev/null
       - uses: actions/checkout@v4
       - name: Probe postgres service
         env:

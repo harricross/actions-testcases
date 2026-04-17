@@ -59,12 +59,21 @@ jobs:
         run: |
           set -euo pipefail
           [ "${SUITE_VAR:-}" = "$EXPECTED" ] || { echo "FAIL: SUITE_VAR=$SUITE_VAR"; exit 1; }
-          # Windows runner doesn't reliably mark files +x for unixy probe;
-          # the PATH entry itself being effective is what we assert.
-          case ":$PATH:" in
-            *":$RUNNER_TEMP/bin:"*) ;;
-            *) echo "FAIL: $RUNNER_TEMP/bin not on PATH"; exit 1 ;;
-          esac
+          # The runner appends GITHUB_PATH entries in OS-native form, so on
+          # Windows the separator is ';' and the path uses backslashes.
+          # Rather than parse PATH, prove it works by resolving the tool.
+          if command -v probe-tool >/dev/null 2>&1; then
+            echo "PASS: GITHUB_PATH applied — probe-tool resolves on PATH"
+          else
+            # On Windows the file we wrote isn't marked +x, so `command -v`
+            # may miss it; fall back to a directory-presence check that
+            # tolerates either separator.
+            case "$PATH" in
+              *"$RUNNER_TEMP/bin"*|*"$RUNNER_TEMP\\bin"*) ;;
+              *) echo "FAIL: $RUNNER_TEMP/bin not on PATH (PATH=$PATH)"; exit 1 ;;
+            esac
+            echo "PASS: GITHUB_PATH entry present (tool not executable on this OS)"
+          fi
           echo "PASS: GITHUB_ENV and GITHUB_PATH applied" >> "$GITHUB_STEP_SUMMARY"
       - name: GITHUB_OUTPUT round-trip
         id: out
