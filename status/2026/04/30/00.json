@@ -1,0 +1,277 @@
+{
+  "generated_at": "2026-04-30T00:57:13Z",
+  "aggregator_run": "25141800410",
+  "aggregator_url": "https://github.com/harricross/actions-testcases/actions/runs/25141800410",
+  "suites": [
+    {
+      "workflow": "_scheduler.yml",
+      "label": "Scheduler (top-level)",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "triggers-push.yml",
+      "label": "triggers — push / PR",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "triggers-events.yml",
+      "label": "triggers — issues / events",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "triggers-manual.yml",
+      "label": "triggers — workflow_dispatch",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "triggers-workflow-call.yml",
+      "label": "triggers — workflow_call",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "reusable-caller.yml",
+      "label": "reusable workflow caller",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "triggers-workflow-run.yml",
+      "label": "triggers — workflow_run",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "runners-os-matrix.yml",
+      "label": "runners — ubuntu/win/mac",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "runners-self-hosted.yml",
+      "label": "runners — self-hosted",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "runners-arc.yml",
+      "label": "runners — Actions Runner Controller",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "runners-larger.yml",
+      "label": "runners — larger hosted",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "runners-container.yml",
+      "label": "runners — container + services",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "matrix-strategies.yml",
+      "label": "matrix strategies",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "expressions-contexts.yml",
+      "label": "expressions / contexts",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "job-orchestration.yml",
+      "label": "job orchestration",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "concurrency.yml",
+      "label": "concurrency",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "permissions-token.yml",
+      "label": "permissions / GITHUB_TOKEN",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "secrets-and-vars.yml",
+      "label": "secrets / vars / masking",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "environments-approval.yml",
+      "label": "environments / approvals",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "oidc-cloud.yml",
+      "label": "OIDC token issuance",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "artifacts.yml",
+      "label": "artifacts (v4)",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "cache.yml",
+      "label": "cache",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "workflow-commands.yml",
+      "label": "workflow commands",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "step-summary-annotations.yml",
+      "label": "step summary / annotations",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "composite-action-test.yml",
+      "label": "composite action",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "docker-action-test.yml",
+      "label": "docker action",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "javascript-action-test.yml",
+      "label": "javascript action",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "artifacts-attestations.yml",
+      "label": "build provenance attestations",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "dependency-graph.yml",
+      "label": "dependency submission",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    },
+    {
+      "workflow": "pages-deploy.yml",
+      "label": "pages deploy",
+      "run_id": 0,
+      "conclusion": "missing",
+      "status": "missing",
+      "url": "",
+      "created_at": ""
+    }
+  ]
+}
