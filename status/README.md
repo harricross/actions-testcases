@@ -1,12 +1,12 @@
 # actions-testcases — status history
 
-**Latest snapshot:** [`status/2026/05/23/23.md`](./status/2026/05/23/23.md) — 2026-05-23T23:24:19Z
+**Latest snapshot:** [`status/2026/05/24/01.md`](./status/2026/05/24/01.md) — 2026-05-24T01:05:06Z
 
 → **[Live dashboard](https://harricross.github.io/actions-testcases/)** (rendered fresh every hour)
 
 → [Latest highlights](./highlights.md) · [machine-readable metrics](./metrics.json)
 
-# Highlights — 2026-05-23T23:24:19Z
+# Highlights — 2026-05-24T01:05:06Z
 
 ## Per-suite snapshot
 
