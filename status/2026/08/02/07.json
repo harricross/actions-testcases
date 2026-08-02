@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-02T07:00:14Z",
-  "aggregator_run": "30736948961",
-  "aggregator_url": "https://github.com/harricross/actions-testcases/actions/runs/30736948961",
+  "generated_at": "2026-08-02T07:51:22Z",
+  "aggregator_run": "30738606751",
+  "aggregator_url": "https://github.com/harricross/actions-testcases/actions/runs/30738606751",
   "suites": [
     {
       "workflow": "_scheduler.yml",
