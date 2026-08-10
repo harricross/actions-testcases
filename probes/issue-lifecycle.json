@@ -624,6 +624,42 @@
           "status": "pass"
         }
       ]
+    },
+    {
+      "run_id": "31361808916",
+      "run_url": "https://github.com/harricross/actions-testcases/actions/runs/31361808916",
+      "started_at": "2026-08-10T06:23:49Z",
+      "ended_at": "2026-08-10T06:23:54Z",
+      "duration_seconds": 5,
+      "conclusion": "success",
+      "issue_number": 6505,
+      "issue_deleted": false,
+      "phases": [
+        {
+          "name": "create",
+          "status": "pass"
+        },
+        {
+          "name": "read_open",
+          "status": "pass"
+        },
+        {
+          "name": "comment",
+          "status": "pass"
+        },
+        {
+          "name": "list_comments",
+          "status": "pass"
+        },
+        {
+          "name": "close",
+          "status": "pass"
+        },
+        {
+          "name": "read_closed",
+          "status": "pass"
+        }
+      ]
     }
   ]
 }
